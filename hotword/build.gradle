@@ -1,0 +1,8 @@
+
+dependencies {
+    compile project(":search-core")
+    compile project(":search-core-model")
+    compile project(":search-core-util")
+    
+    compile("com.belerweb:pinyin4j:2.5.1")
+}

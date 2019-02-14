@@ -1,0 +1,53 @@
+apply plugin: 'maven-publish'
+
+group = "com.jorado"
+version = "1.0.0-SNAPSHOT"
+
+defaultTasks 'clean', 'jar'
+
+task sourceJar(type: Jar) {
+    from sourceSets.main.allJava
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+
+            artifact sourceJar {
+                classifier "sources"
+            }
+        }
+    }
+    repositories {
+        maven {
+            url "http://172.17.0.59:8081/nexus/content/repositories/snapshots"
+            credentials {
+                username 'admin'
+                password 'admin123'
+            }
+        }
+    }
+}
+
+ext {
+    fastjsonVersion = '1.2.8'
+    gsonVersion = '2.8.2'
+    guavaVersion = '23.0'
+    httpClientVersion = "4.3.3";
+}
+
+dependencies {
+    compile "org.apache.httpcomponents:httpclient:$httpClientVersion"
+    compile "com.alibaba:fastjson:$fastjsonVersion"
+    compile "com.google.code.gson:gson:$gsonVersion"
+    compile "com.google.guava:guava:$guavaVersion"
+}
+
+test {
+    exclude 'contact/**'
+}
+
+task contactTest(type: Test) {
+    include 'contact/**'
+}

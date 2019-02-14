@@ -1,0 +1,338 @@
+package com.jorado.core.util;
+
+import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
+
+
+public class IOUtils {
+
+    private static final int BUFFER_SIZE = 1024 * 8;
+
+    private IOUtils() {
+    }
+
+    public static byte[] readToBytes(InputStream in) throws IOException {
+        try {
+            UnsafeByteArrayOutputStream out = new UnsafeByteArrayOutputStream();
+            try {
+                byte[] buf = new byte[8192];
+                int len = 0;
+                while ((len = in.read(buf)) != -1) {
+                    out.write(buf, 0, len);
+                }
+                return out.toByteArray();
+            } finally {
+                out.close();
+            }
+        } finally {
+            in.close();
+        }
+    }
+
+    public static char[] readToChars(Reader reader) throws IOException {
+        try {
+            StringBuilder buffer = new StringBuilder();
+            char[] buf = new char[8192];
+            int len = 0;
+            while ((len = reader.read(buf)) != -1) {
+                buffer.append(buf, 0, len);
+            }
+            char[] result = new char[buffer.length()];
+            buffer.getChars(0, buffer.length(), result, 0);
+            return result;
+        } finally {
+            reader.close();
+        }
+    }
+
+    public static String readToString(Reader reader) throws IOException {
+        try {
+            StringBuilder buffer = new StringBuilder();
+            char[] buf = new char[8192];
+            int len = 0;
+            while ((len = reader.read(buf)) != -1) {
+                buffer.append(buf, 0, len);
+            }
+            return buffer.toString();
+        } finally {
+            reader.close();
+        }
+    }
+
+    public static List<String> readLines(Reader reader) throws IOException {
+        BufferedReader bufferedReader = new BufferedReader(reader);
+        try {
+            List<String> lines = new ArrayList<String>();
+            String line = null;
+            while ((line = bufferedReader.readLine()) != null) {
+                lines.add(line);
+            }
+            return lines;
+        } finally {
+            bufferedReader.close();
+        }
+    }
+
+    public static void copy(Reader in, Writer out) throws IOException {
+        try {
+            char[] buf = new char[8192];
+            int len = 0;
+            while ((len = in.read(buf)) != -1) {
+                out.write(buf, 0, len);
+            }
+        } finally {
+            in.close();
+        }
+    }
+
+    public static void copy(InputStream in, OutputStream out) throws IOException {
+        try {
+            byte[] buf = new byte[8192];
+            int len = 0;
+            while ((len = in.read(buf)) != -1) {
+                out.write(buf, 0, len);
+            }
+        } finally {
+            in.close();
+        }
+    }
+
+    /**
+     * write.
+     *
+     * @param is InputStream instance.
+     * @param os OutputStream instance.
+     * @return count.
+     * @throws IOException
+     */
+    public static long write(InputStream is, OutputStream os) throws IOException {
+        return write(is, os, BUFFER_SIZE);
+    }
+
+    /**
+     * write.
+     *
+     * @param is         InputStream instance.
+     * @param os         OutputStream instance.
+     * @param bufferSize buffer size.
+     * @return count.
+     * @throws IOException
+     */
+    public static long write(InputStream is, OutputStream os, int bufferSize) throws IOException {
+        int read;
+        long total = 0;
+        byte[] buff = new byte[bufferSize];
+        while (is.available() > 0) {
+            read = is.read(buff, 0, buff.length);
+            if (read > 0) {
+                os.write(buff, 0, read);
+                total += read;
+            }
+        }
+        return total;
+    }
+
+    /**
+     * read string.
+     *
+     * @param reader Reader instance.
+     * @return String.
+     * @throws IOException
+     */
+    public static String read(Reader reader) throws IOException {
+        StringWriter writer = new StringWriter();
+        try {
+            write(reader, writer);
+            return writer.getBuffer().toString();
+        } finally {
+            writer.close();
+        }
+    }
+
+    /**
+     * write string.
+     *
+     * @param writer Writer instance.
+     * @param string String.
+     * @throws IOException
+     */
+    public static long write(Writer writer, String string) throws IOException {
+        Reader reader = new StringReader(string);
+        try {
+            return write(reader, writer);
+        } finally {
+            reader.close();
+        }
+    }
+
+    /**
+     * write.
+     *
+     * @param reader Reader.
+     * @param writer Writer.
+     * @return count.
+     * @throws IOException
+     */
+    public static long write(Reader reader, Writer writer) throws IOException {
+        return write(reader, writer, BUFFER_SIZE);
+    }
+
+    /**
+     * write.
+     *
+     * @param reader     Reader.
+     * @param writer     Writer.
+     * @param bufferSize buffer size.
+     * @return count.
+     * @throws IOException
+     */
+    public static long write(Reader reader, Writer writer, int bufferSize) throws IOException {
+        int read;
+        long total = 0;
+        char[] buf = new char[BUFFER_SIZE];
+        while ((read = reader.read(buf)) != -1) {
+            writer.write(buf, 0, read);
+            total += read;
+        }
+        return total;
+    }
+
+    /**
+     * read lines.
+     *
+     * @param file file.
+     * @return lines.
+     * @throws IOException
+     */
+    public static String[] readLines(File file) throws IOException {
+        if (file == null || !file.exists() || !file.canRead())
+            return new String[0];
+
+        return readLines(new FileInputStream(file));
+    }
+
+    /**
+     * read lines.
+     *
+     * @param is input stream.
+     * @return lines.
+     * @throws IOException
+     */
+    public static String[] readLines(InputStream is) throws IOException {
+        List<String> lines = new ArrayList<String>();
+        BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+        try {
+            String line;
+            while ((line = reader.readLine()) != null)
+                lines.add(line);
+            return lines.toArray(new String[0]);
+        } finally {
+            reader.close();
+        }
+    }
+
+    /**
+     * write lines.
+     *
+     * @param os    output stream.
+     * @param lines lines.
+     * @throws IOException
+     */
+    public static void writeLines(OutputStream os, String[] lines) throws IOException {
+        PrintWriter writer = new PrintWriter(new OutputStreamWriter(os));
+        try {
+            for (String line : lines)
+                writer.println(line);
+            writer.flush();
+        } finally {
+            writer.close();
+        }
+    }
+
+    /**
+     * write lines.
+     *
+     * @param file  file.
+     * @param lines lines.
+     * @throws IOException
+     */
+    public static void writeLines(File file, String[] lines) throws IOException {
+        if (file == null)
+            throw new IOException("File is null.");
+        writeLines(new FileOutputStream(file), lines);
+    }
+
+    /**
+     * append lines.
+     *
+     * @param file  file.
+     * @param lines lines.
+     * @throws IOException
+     */
+    public static void appendLines(File file, String[] lines) throws IOException {
+        if (file == null)
+            throw new IOException("File is null.");
+        writeLines(new FileOutputStream(file, true), lines);
+    }
+
+    /**
+     * @param filePath
+     * @return
+     * @throws IOException
+     */
+    public static String read(String filePath) throws IOException {
+        return read(filePath, "UTF-8");
+    }
+
+    /**
+     * @param filePath
+     * @param charsetName
+     * @return
+     * @throws IOException
+     */
+    public static String read(String filePath, String charsetName) throws IOException {
+
+        File file = new File(filePath);
+
+        InputStreamReader reader = new InputStreamReader(new FileInputStream(file), charsetName);
+
+        try {
+            return readToString(reader);
+        } finally {
+            reader.close();
+        }
+    }
+
+    /**
+     * @param filePath
+     * @param charsetName
+     * @return
+     * @throws IOException
+     */
+    public static List<String> readLines(String filePath, String charsetName) throws IOException {
+
+        File file = new File(filePath);
+
+        InputStreamReader reader = new InputStreamReader(new FileInputStream(file), charsetName);
+
+        try {
+            List<String> lines = readLines(reader);
+            return lines;
+        } finally {
+            reader.close();
+        }
+
+    }
+
+    /**
+     * @param filePath
+     * @return
+     * @throws IOException
+     */
+    public static List<String> readLines(String filePath) throws IOException {
+
+        return readLines(filePath, "UTF-8");
+    }
+
+}

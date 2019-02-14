@@ -1,0 +1,26 @@
+rootProject.name = 'jorado'
+
+include 'core'
+include 'zkconfig'
+include 'dubbo'
+include 'fasttext'
+include 'httpclient'
+include 'logger'
+include 'logger-core'
+include 'logger-dubbo'
+include 'template-engine'
+include 'word2vec'
+include 'ik-admin'
+include 'ik'
+include 'ik-company'
+include 'ik-position'
+include 'ik-core'
+include 'lexicon'
+include "hotword"
+include "hotword-api"
+include "hotword-service"
+include "search-core"
+include "search-core-model"
+include "search-core-util"
+include "search-core-solrextend"
+include "qos"

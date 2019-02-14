@@ -1,0 +1,69 @@
+package position.wltea.analyzer.seg.service.imp;
+
+import position.wltea.analyzer.core.Lexeme;
+import position.wltea.analyzer.seg.model.WordModel;
+
+/**
+ * Created by len.zhang on 2018/9/17.
+ * 自定义分词实现
+ */
+public class SegServiceImpl extends IKSegServiceImpl {
+
+    /**
+     * 智能分词
+     *
+     * @param input
+     * @return
+     */
+    @Override
+    public WordModel smartSegWord(String input) {
+
+        WordModel wordModel = super.smartSegWord(input);//IK基本分词
+
+        //分词校准
+        WordAdjust wordSegAdjust = new WordAdjust();
+
+        wordModel = wordSegAdjust.adjust(wordModel);
+
+        //分词输出
+        String str = null;
+        for (Lexeme lexeme1 : wordModel.getLexemes()) {
+            if (null == str) {
+                str = lexeme1.getLexemeText();
+                continue;
+            }
+            str = str + " " + lexeme1.getLexemeText();
+        }
+        wordModel.setContent(str);
+        return wordModel;
+    }
+
+    /**
+     * 分词
+     *
+     * @param input
+     * @return
+     */
+    @Override
+    public WordModel segWord(String input) {
+
+        WordModel wordModel = super.segWord(input);//IK基本分词
+
+        //分词校准
+        WordAdjust wordSegAdjust = new WordAdjust();
+
+        wordModel = wordSegAdjust.adjust(wordModel);
+
+        //分词输出
+        String str = null;
+        for (Lexeme lexeme1 : wordModel.getLexemes()) {
+            if (null == str) {
+                str = lexeme1.getLexemeText();
+                continue;
+            }
+            str = str + " " + lexeme1.getLexemeText();
+        }
+        wordModel.setContent(str);
+        return wordModel;
+    }
+}

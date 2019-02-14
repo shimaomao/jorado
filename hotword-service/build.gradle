@@ -1,0 +1,50 @@
+apply plugin: "org.springframework.boot"
+
+dependencies {
+    compile project(":hotword")
+    compile("org.apache.solr:solr-solrj:$solrVersion")
+    compile("org.springframework.boot:spring-boot-starter") {
+        exclude group: "org.springframework.boot", module: "spring-boot-starter-logging"
+    }
+    testCompile("org.springframework.boot:spring-boot-starter-test")
+}
+
+def serviceName = System.getProperty("serv", "hotword-service")
+
+jar {
+    manifest.attributes "Main-Class": "com.jorado.search.hotwordservice.Startup"
+    from {
+        configurations.compile.collect {
+            it.isDirectory() ? it : zipTree(it)
+        }
+    }
+}
+
+task copyJarsTobin(type: Copy, dependsOn: jar) {
+    from configurations.runtime
+    from "build/libs/hotword-service.jar"
+    into "build/services/$serviceName/bin"
+}
+
+task copyConfigFile(type: Copy, dependsOn: copyJarsTobin) {
+    into "build/services/$serviceName/classes"
+    from "build/resources/main"
+}
+
+task releaseService(type: Copy, dependsOn: copyConfigFile) {
+    into "build/services/$serviceName"
+    from "startup.sh"
+}
+
+buildscript {
+    ext {
+        springBootVersion = "1.5.19.RELEASE"
+    }
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+    }
+}
+//gradle -Denv=dev rS

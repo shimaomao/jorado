@@ -1,0 +1,12 @@
+ext {
+    springVersion = "4.3.16.RELEASE"
+}
+
+dependencies {
+    compile project(":search-core-model")
+    compile project(":logger")
+
+    compile("org.apache.solr:solr-solrj:$solrVersion")
+    compile("org.springframework:spring-core:$springVersion")
+    compile("org.springframework:spring-context:$springVersion")
+}

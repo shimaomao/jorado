@@ -1,0 +1,34 @@
+apply plugin: 'maven-publish'
+
+task sourceJar(type: Jar) {
+    from sourceSets.main.allJava
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+
+            artifact sourceJar {
+                classifier 'sources'
+            }
+        }
+    }
+    repositories {
+        maven {
+            url "http://maven.zhaopin.com:8000/nexus/content/repositories/snapshots"
+            credentials {
+                username 'qilei.sun'
+                password 'zhaopin'
+            }
+        }
+
+        mavenLocal()
+    }
+}
+
+dependencies {
+    compile project(':core')
+    compile project(':logger')
+    compile("org.apache.httpcomponents:httpclient:$httpClientVersion")
+}
