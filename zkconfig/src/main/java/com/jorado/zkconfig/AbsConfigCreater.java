@@ -2,12 +2,12 @@ package com.jorado.zkconfig;
 
 import com.jorado.core.logger.Logger;
 import com.jorado.core.logger.LoggerFactory;
-import com.jorado.zkconfig.util.FileUtils;
+import com.jorado.core.util.IOUtils;
 import com.jorado.core.util.JsonUtils;
 
 public abstract class AbsConfigCreater {
 
-    private Logger logger= LoggerFactory.getLogger(AbsConfigCreater.class);
+    private Logger logger = LoggerFactory.getLogger(AbsConfigCreater.class);
 
     public abstract ZPConfig get(String path);
 
@@ -16,7 +16,7 @@ public abstract class AbsConfigCreater {
         ZPConfig config = null;
         try {
             Class<?> type = Class.forName(className);
-            config = (ZPConfig) JsonUtils.fromGson(content, type);
+            config = (ZPConfig) JsonUtils.fromJson(content, type);
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
@@ -24,10 +24,9 @@ public abstract class AbsConfigCreater {
     }
 
     public synchronized void save(String path, ZPConfig config) {
-        Class<? extends ZPConfig> type = config.getClass();
-        String content = JsonUtils.toGson(config, type);
+        String content = JsonUtils.toJson(config);
         String localPath = covertToLocal(path);
-        FileUtils.save(localPath, content);
+        IOUtils.saveFile(localPath, content);
     }
 
     public synchronized String covertToLocal(String path) {
@@ -38,12 +37,12 @@ public abstract class AbsConfigCreater {
             int end = path.lastIndexOf("/");
             fileDir = path.substring(start + 1, end);
         } catch (Exception ex) {
-            logger.error("covertToLocal error",ex);
+            logger.error("covertToLocal error", ex);
         }
         String dir = root + "/conf" + fileDir;
 
-        if (!FileUtils.exists(dir)) {
-            FileUtils.createDir(dir);
+        if (!IOUtils.exists(dir)) {
+            IOUtils.createDirectory(dir);
         }
 
         String fileName = path.substring(path.lastIndexOf("/")) + ".json";

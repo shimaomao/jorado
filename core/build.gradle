@@ -31,17 +31,14 @@ publishing {
 }
 
 ext {
-    fastjsonVersion = '1.2.8'
-    gsonVersion = '2.8.2'
-    guavaVersion = '23.0'
     httpClientVersion = "4.3.3";
 }
 
 dependencies {
+    compile 'com.fasterxml.jackson.core:jackson-core:2.9.7'
+    compile 'com.fasterxml.jackson.core:jackson-databind:2.9.7'
+    compile 'com.fasterxml.jackson.core:jackson-annotations:2.9.7'
     compile "org.apache.httpcomponents:httpclient:$httpClientVersion"
-    compile "com.alibaba:fastjson:$fastjsonVersion"
-    compile "com.google.code.gson:gson:$gsonVersion"
-    compile "com.google.guava:guava:$guavaVersion"
 }
 
 test {

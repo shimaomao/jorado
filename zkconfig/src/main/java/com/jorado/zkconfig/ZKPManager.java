@@ -11,21 +11,21 @@ import org.apache.zookeeper.data.Stat;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
-public class ZKPManager implements Watcher {
+public class ZKPManager implements Watcher, AutoCloseable {
 
     private static Logger logger = LoggerFactory.getLogger(ZKPManager.class);
     private static final int sessionTimeout = 10000;
 
     private ZooKeeper zk = null;
     private CountDownLatch downLoatch = new CountDownLatch(1);
-    public IZKPWatcher updateHandler,expiredHandler,childrenChangedHandler,connectionHandler;
+    public IZKPWatcher updateHandler, expiredHandler, childrenChangedHandler, connectionHandler;
 
-    public void createConnection() {
-        createConnection(AppProperties.ZOOKEEPER_ADDRESS);
+    public void open() {
+        open(AppProperties.ZOOKEEPER_ADDRESS);
     }
 
-    public void createConnection(String path) {
-        this.releaseConnection();
+    public void open(String path) {
+        this.close();
         try {
             zk = new ZooKeeper(path, sessionTimeout, this);
             downLoatch.await();
@@ -34,10 +34,12 @@ public class ZKPManager implements Watcher {
         }
     }
 
-    public void releaseConnection() {
+    @Override
+    public void close() {
         try {
-            if (zk != null)
+            if (zk != null) {
                 this.zk.close();
+            }
         } catch (InterruptedException e) {
             logger.error("Close zookeeper exception : ", e);
         }

@@ -2,35 +2,85 @@ package com.jorado.core.util;
 
 import java.io.Reader;
 import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.text.DateFormat;
 import java.text.ParseException;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Map;
+import java.text.SimpleDateFormat;
+import java.util.*;
 import java.util.regex.Pattern;
 
+/*
+ * Created by len.zhang on 2018/4/17.
+ *
+ */
 
-public class StringUtils {
+public final class StringUtils {
+    private StringUtils() {
+    }
+
+    /**
+     * The empty String {@code ""}.
+     */
+    public static final String EMPTY = "";
+
+    /**
+     * The context path separator String {@code "/"}.
+     */
+    public static final String CONTEXT_SEP = "/";
+
+    /**
+     * The string {@code "*"}.
+     */
+    public static final String ALL = "*";
+
+    /**
+     * The string {@code "default"}.
+     */
+    public static final String DEFAULT = "default";
+
+    /**
+     * The string {@code "true"}.
+     */
+    public static final String TRUE = "true";
+
+    /**
+     * The string {@code "false"}.
+     */
+    public static final String FALSE = "false";
+
+    /**
+     * The string {@code "null"}.
+     */
+    public static final String NULL = "null";
+
+    /**
+     * 空数组
+     */
+    public static final String[] EMPTY_STRING_ARRAY = new String[0];
 
     private static final Pattern NUMBER_PATTERN = Pattern.compile("^[+\\-]?[0-9]+(\\.[.0-9]+)?[BSILFDbsilfd]?$");
-
     private static final Pattern SYMBOL_PATTERN = Pattern.compile("[^(_a-zA-Z0-9)]");
-
     private static final Pattern CLASS_NAME_PATTERN = Pattern.compile("[_a-zA-Z][\\._a-zA-Z0-9]+");
     private static final Pattern NAMED_PATTERN = Pattern.compile("^[_A-Za-z][_0-9A-Za-z]*$");
     private static final Pattern TYPED_PATTERN = Pattern.compile("^[_A-Za-z][_.0-9A-Za-z]*$");
     private static final Pattern FUNCTION_PATTERN = Pattern.compile("^\\.[_A-Za-z][_0-9A-Za-z]*$");
     private static final Pattern COMMA_SPLIT_PATTERN = Pattern.compile("\\s*\\,\\s*");
+    private static final Pattern CHINESE_PATTERN = Pattern.compile("[^\\u4e00-\\u9fa5]");
+    private static final Pattern SCRIPT_PATTERN = Pattern.compile("<script[^>]*?>[\\s\\S]*?<\\/script>", Pattern.CASE_INSENSITIVE);
+    private static final Pattern STYLE_PATTERN = Pattern.compile("<style[^>]*?>[\\s\\S]*?<\\/style>", Pattern.CASE_INSENSITIVE);
+    private static final Pattern HTML_PATTERN = Pattern.compile("<[^>]+>", Pattern.CASE_INSENSITIVE);
+    private static final Pattern SPECIALCHAR_PATTERN = Pattern.compile("[_\\-\"+－`~!@$%^&*()=|{}':;',\\[\\]<>/?~！@￥%……&*（）——|{}【】‘；：”“’。，、？（）★『』！○、]");
 
     public static String getVaildName(String name) {
         return SYMBOL_PATTERN.matcher(name).replaceAll("_");
     }
 
     public static boolean isClassName(String value) {
-        return isEmpty(value) ? false : CLASS_NAME_PATTERN.matcher(value).matches();
+        return !isEmpty(value) && CLASS_NAME_PATTERN.matcher(value).matches();
     }
 
     public static boolean isNumber(String value) {
-        return isEmpty(value) ? false : NUMBER_PATTERN.matcher(value).matches();
+        return !isEmpty(value) && NUMBER_PATTERN.matcher(value).matches();
     }
 
     public static boolean isNumber(char[] value) {
@@ -242,7 +292,7 @@ public class StringUtils {
                 if (buf == null) {
                     buf = new StringBuilder(len * 2);
                     if (i > 0) {
-                        buf.append(src.substring(0, i));
+                        buf.append(src, 0, i);
                     }
                 }
                 buf.append(rep);
@@ -428,7 +478,7 @@ public class StringUtils {
                 if (buf == null) {
                     buf = new StringBuilder(len);
                     if (j > 0) {
-                        buf.append(value.substring(0, j));
+                        buf.append(value, 0, j);
                     }
                 }
                 buf.append(ch);
@@ -455,7 +505,7 @@ public class StringUtils {
                     if (buf == null) {
                         buf = new StringBuilder(len * 2);
                         if (i > 0) {
-                            buf.append(value.substring(0, i));
+                            buf.append(value, 0, i);
                         }
                     }
                     buf.append("&lt;");
@@ -464,7 +514,7 @@ public class StringUtils {
                     if (buf == null) {
                         buf = new StringBuilder(len * 2);
                         if (i > 0) {
-                            buf.append(value.substring(0, i));
+                            buf.append(value, 0, i);
                         }
                     }
                     buf.append("&gt;");
@@ -473,7 +523,7 @@ public class StringUtils {
                     if (buf == null) {
                         buf = new StringBuilder(len * 2);
                         if (i > 0) {
-                            buf.append(value.substring(0, i));
+                            buf.append(value, 0, i);
                         }
                     }
                     buf.append("&quot;");
@@ -482,7 +532,7 @@ public class StringUtils {
                     if (buf == null) {
                         buf = new StringBuilder(len * 2);
                         if (i > 0) {
-                            buf.append(value.substring(0, i));
+                            buf.append(value, 0, i);
                         }
                     }
                     buf.append("&apos;");
@@ -491,7 +541,7 @@ public class StringUtils {
                     if (buf == null) {
                         buf = new StringBuilder(len * 2);
                         if (i > 0) {
-                            buf.append(value.substring(0, i));
+                            buf.append(value, 0, i);
                         }
                     }
                     buf.append("&amp;");
@@ -731,7 +781,7 @@ public class StringUtils {
                             if (buf == null) {
                                 buf = new StringBuilder(len3);
                                 if (j > 0) {
-                                    buf.append(value.substring(0, j));
+                                    buf.append(value, 0, j);
                                 }
                             }
                             buf.append('<');
@@ -746,7 +796,7 @@ public class StringUtils {
                             if (buf == null) {
                                 buf = new StringBuilder(len3);
                                 if (j > 0) {
-                                    buf.append(value.substring(0, j));
+                                    buf.append(value, 0, j);
                                 }
                             }
                             buf.append('>');
@@ -762,7 +812,7 @@ public class StringUtils {
                             if (buf == null) {
                                 buf = new StringBuilder(len4);
                                 if (j > 0) {
-                                    buf.append(value.substring(0, j));
+                                    buf.append(value, 0, j);
                                 }
                             }
                             buf.append('&');
@@ -774,7 +824,7 @@ public class StringUtils {
                             if (buf == null) {
                                 buf = new StringBuilder(len5);
                                 if (j > 0) {
-                                    buf.append(value.substring(0, j));
+                                    buf.append(value, 0, j);
                                 }
                             }
                             buf.append('\'');
@@ -791,7 +841,7 @@ public class StringUtils {
                             if (buf == null) {
                                 buf = new StringBuilder(len5);
                                 if (j > 0) {
-                                    buf.append(value.substring(0, j));
+                                    buf.append(value, 0, j);
                                 }
                             }
                             buf.append('\"');
@@ -836,7 +886,7 @@ public class StringUtils {
                         if (buf == null) {
                             buf = new StringBuilder(len);
                             if (i > 0) {
-                                buf.append(value.substring(0, i));
+                                buf.append(value, 0, i);
                             }
                         }
                     }
@@ -878,7 +928,7 @@ public class StringUtils {
                         if (buf == null) {
                             buf = new StringBuilder(len);
                             if (i > 0) {
-                                buf.append(value.substring(0, i));
+                                buf.append(value, 0, i);
                             }
                         }
                         buf.append(' ');
@@ -1005,7 +1055,7 @@ public class StringUtils {
                         if (buf == null) {
                             buf = new StringBuilder(len);
                             if (pre > 0) {
-                                buf.append(value.substring(0, pre + 1));
+                                buf.append(value, 0, pre + 1);
                             }
                         } else {
                             buf.setLength(buf.length() - i + pre);
@@ -1028,7 +1078,7 @@ public class StringUtils {
         return value;
     }
 
-    public static String getConditionCode(Class<?> type, String code, String[] sizers) throws ParseException {
+    public static String getConditionCode(Class<?> type, String code, String[] sizers) {
         if (type != boolean.class) {
             if (type == byte.class
                     || type == short.class
@@ -1146,10 +1196,6 @@ public class StringUtils {
         return location;
     }
 
-    public static String removeCommaValue(String values, String value) {
-        return StringUtils.joinByComma(CollectionUtils.remove(StringUtils.splitByComma(values), value));
-    }
-
     public static String joinByComma(String[] values) {
         return joinBy(values, ",");
     }
@@ -1235,4 +1281,566 @@ public class StringUtils {
         return String.valueOf(v1) + String.valueOf(v2);
     }
 
+    public static String escapeSolrString(String value) {
+        if (value != null) {
+            StringBuilder buf = null;
+            for (int i = 0; i < value.length(); i++) {
+                char ch = value.charAt(i);
+                String str = null;
+                switch (ch) {
+                    case '(':
+                        str = "\\(";
+                        break;
+                    case ')':
+                        str = "\\)";
+                        break;
+                    case '/':
+                        str = "\\/";
+                        break;
+                    case '<':
+                        str = "\\<";
+                        break;
+                    case '>':
+                        str = "\\>";
+                        break;
+                    case '{':
+                        str = "\\{";
+                        break;
+                    case '}':
+                        str = "\\}";
+                        break;
+                    case '+':
+                        str = "\\+";
+                        break;
+                    case '-':
+                        str = "\\-";
+                        break;
+                    case '^':
+                        str = "\\^";
+                        break;
+                    case '\\':
+                        str = "\\\\";
+                        break;
+//                    case '*':
+//                        //如果以*结尾，表示前缀查询，否则表示特殊字符
+//                        if (i != value.length() - 1) {
+//                            str = "\\*";
+//                        }
+//                        break;
+                    case '~':
+                        str = "\\~";
+                        break;
+                    case '&':
+                        str = "\\&";
+                        break;
+                    case '!':
+                        str = "\\!";
+                        break;
+                    case ':':
+                        str = "\\:";
+                        break;
+                    case '|':
+                        str = "\\|";
+                        break;
+                    case '?':
+                        str = "\\?";
+                        break;
+                    case '[':
+                        str = "\\[";
+                        break;
+                    case ']':
+                        str = "\\]";
+                        break;
+                    case '\"':
+                        str = " ";
+                        break;
+                    case '\'':
+                        str = " ";
+                        break;
+                    default:
+                        break;
+                }
+                if (str != null) {
+                    if (buf == null) {
+                        buf = new StringBuilder();
+                        if (i > 0) {
+                            buf.append(value, 0, i);
+                        }
+                    }
+                    buf.append(str);
+                } else {
+                    if (buf != null) {
+                        buf.append(ch);
+                    }
+                }
+            }
+            if (buf != null) {
+                return buf.toString();
+            }
+        }
+        return value;
+    }
+
+    public static String removeSpecialChar(String value) {
+        return SPECIALCHAR_PATTERN.matcher(value).replaceAll("");
+    }
+
+    public static String escapeHtml(String value) {
+        if (value != null) {
+            StringBuilder buf = null;
+            for (int i = 0; i < value.length(); i++) {
+                char ch = value.charAt(i);
+                String str;
+                switch (ch) {
+                    case '&':
+                        str = "&amp;";
+                        break;
+                    case '<':
+                        str = "&lt;";
+                        break;
+                    case '>':
+                        str = "&gt;";
+                        break;
+                    case '\"':
+                        str = "&quot;";
+                        break;
+                    case '\'':
+                        str = "&apos;";
+                        break;
+                    default:
+                        str = null;
+                        break;
+                }
+                if (str != null) {
+                    if (buf == null) {
+                        buf = new StringBuilder();
+                        if (i > 0) {
+                            buf.append(value, 0, i);
+                        }
+                    }
+                    buf.append(str);
+                } else {
+                    if (buf != null) {
+                        buf.append(ch);
+                    }
+                }
+            }
+            if (buf != null) {
+                return buf.toString();
+            }
+        }
+        return value;
+    }
+
+    public static String unescapeHtml(String text) { // TODO 性能
+        return text.replace("&lt;", "<").replace("&gt;", ">")
+                .replace("&quot;", "\"").replace("&apos;", "\'")
+                .replace("&amp;", "&");
+    }
+
+    public static String getLocationMessage(Reader reader, int offset) {
+        String location = "";
+        if (offset <= 0) {
+            return location;
+        }
+        try {
+            int line = 1;
+            int column = 0;
+            int count = 0;
+            int len = 0;
+            char[] buf = new char[128];
+            StringBuilder cur = new StringBuilder();
+            while ((len = reader.read(buf)) > 0) {
+                for (int i = 0; i < len; i++) {
+                    char ch = buf[i];
+                    if (ch == '\n') {
+                        line++;
+                        column = 0;
+                        cur.setLength(0);
+                    } else {
+                        column++;
+                        cur.append(ch);
+                    }
+                    if (count >= offset) {
+                        int padding = 20;
+                        String before;
+                        if (cur.length() <= padding) {
+                            before = cur.toString();
+                        } else {
+                            before = cur.substring(cur.length() - padding);
+                        }
+                        int c = i + 1;
+                        int remain = len - c;
+                        StringBuilder after = new StringBuilder();
+                        boolean breaked = false;
+                        if (remain > 0) {
+                            for (int j = c; j < padding + c && j < buf.length; j++) {
+                                if (buf[j] == '\r' || buf[j] == '\n') {
+                                    breaked = true;
+                                    break;
+                                }
+                                after.append(buf[j]);
+                            }
+                        }
+                        if (!breaked && remain < padding) {
+                            char[] b = new char[padding - remain];
+                            int l = reader.read(b);
+                            if (l > 0) {
+                                for (int j = 0; j < l; j++) {
+                                    if (b[j] == '\r' || b[j] == '\n') {
+                                        break;
+                                    }
+                                    after.append(b[j]);
+                                }
+                            }
+                        }
+                        StringBuilder msg = new StringBuilder();
+                        msg.append("line: " + line + ", column: " + column
+                                + ", char: " + ch + ", in: \n");
+                        for (int j = 0; j < padding * 2; j++) {
+                            msg.append("=");
+                        }
+                        msg.append("\n");
+                        msg.append("...");
+                        msg.append(before);
+                        msg.append(after);
+                        msg.append("...");
+                        msg.append("\n");
+                        for (int j = 0; j < before.length() + 2; j++) {
+                            msg.append(" ");
+                        }
+                        msg.append("^-here\n");
+                        for (int j = 0; j < padding * 2; j++) {
+                            msg.append("=");
+                        }
+                        msg.append("\n");
+                        return msg.toString();
+                    }
+                    count++;
+                }
+            }
+        } catch (Throwable t) {
+        }
+        return location;
+    }
+
+    public static String[] splitString(String str, String sdelimiter) {
+
+        return splitString(str, sdelimiter, true);
+    }
+
+    public static String[] splitString(String str, String sdelimiter, boolean isRemoveEmptyEntries) {
+
+        List<String> list = split(str, sdelimiter, isRemoveEmptyEntries);
+
+        return list.toArray(new String[list.size()]);
+    }
+
+    public static List<String> split(String str, String sdelimiter, boolean isRemoveEmptyEntries) {
+        List<String> list = new ArrayList<>();
+        StringTokenizer st = new StringTokenizer(str, sdelimiter);
+        while (st.hasMoreElements()) {
+            String entry = st.nextToken();
+            if (isRemoveEmptyEntries && isNullOrWhiteSpace(entry)) continue;
+            list.add(entry);
+        }
+        return list;
+    }
+
+    public static List<String> split(String str, String sdelimiter) {
+        return split(str, sdelimiter, true);
+    }
+
+    public static boolean isNullOrEmpty(String str) {
+        return str == null || str.isEmpty();
+    }
+
+    public static boolean isNotNullOrEmpty(String str) {
+        return !isNullOrEmpty(str);
+    }
+
+    public static boolean isNullOrWhiteSpace(String str) {
+        return isNullOrEmpty(str)
+                || (str.length() > 0 && str.trim().length() == 0);
+    }
+
+    public static boolean isNotNullOrWhiteSpace(String str) {
+        return !isNullOrWhiteSpace(str);
+    }
+
+    public static Date toDate(String str) {
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        return toDate(str, format);
+    }
+
+    public static Date toDate(String str, String formatStr) {
+        SimpleDateFormat format = new SimpleDateFormat(formatStr);
+        return toDate(str, format);
+    }
+
+    public static Date toCstDate(String str) {
+        SimpleDateFormat format = new SimpleDateFormat(
+                "EEE MMM dd HH:mm:ss 'CST' yyyy", Locale.US);
+        Date dt = toDate(str, format);
+        Calendar c = Calendar.getInstance();
+        c.setTime(dt);
+        c.add(Calendar.HOUR_OF_DAY, -8);
+        return c.getTime();
+    }
+
+    public static Date toDate(String str, DateFormat format) {
+        Date date = null;
+        try {
+            date = format.parse(str);
+        } catch (ParseException e) {
+        }
+        return date;
+    }
+
+    public static String dateToString(Date date) {
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        return formatter.format(date);
+    }
+
+    public static String joinString(String[] strs, int pos, int limit, String prefix, String suffix, String separate) {
+        if (pos > strs.length - 1) {
+            return joinString(strs, prefix, suffix, separate);
+        }
+        int size = pos + limit <= strs.length ? limit : strs.length - pos;
+        String[] desStrs = new String[size];
+        System.arraycopy(strs, pos, desStrs, 0, size);
+        return joinString(desStrs, prefix, suffix, separate);
+    }
+
+    public static String joinString(String[] strs, String prefix, String suffix, String separate) {
+        if (strs == null) {
+            return null;
+        }
+        int length = strs.length;
+        if (length == 0) {
+            return null;
+        }
+        StringBuilder sb = new StringBuilder();
+        if (strs.length >= 1) {
+            if (!isNullOrEmpty(prefix))
+                sb.append(prefix);
+            sb.append(strs[0]);
+            if (!isNullOrEmpty(suffix))
+                sb.append(suffix);
+        }
+        for (int i = 1; i < length; i++) {
+            if (isNullOrEmpty(strs[i])) {
+                continue;
+            }
+            if (!isNullOrEmpty(separate))
+                sb.append(separate);
+            if (!isNullOrEmpty(prefix))
+                sb.append(prefix);
+            sb.append(strs[i]);
+            if (!isNullOrEmpty(suffix))
+                sb.append(suffix);
+        }
+
+        return sb.toString();
+    }
+
+    public static String joinString(List<String> strs, String prefix, String suffix, String separate) {
+        if (strs == null) {
+            return null;
+        }
+        int length = strs.size();
+        if (length == 0) {
+            return null;
+        }
+
+        StringBuilder sb = new StringBuilder();
+        if (!strs.isEmpty()) {
+            if (!isNullOrEmpty(prefix))
+                sb.append(prefix);
+            sb.append(strs.get(0));
+            if (!isNullOrEmpty(suffix))
+                sb.append(suffix);
+        }
+        for (int i = 1; i < length; i++) {
+            if (isNullOrEmpty(strs.get(i))) {
+                continue;
+            }
+            if (!isNullOrEmpty(separate))
+                sb.append(separate);
+            if (!isNullOrEmpty(prefix))
+                sb.append(prefix);
+            sb.append(strs.get(i));
+            if (!isNullOrEmpty(suffix))
+                sb.append(suffix);
+        }
+
+        return sb.toString();
+    }
+
+    public static String joinString(List<String> strs, String separate) {
+        return joinString(strs, "", "", separate);
+    }
+
+    public static String joinString(List<String> strs) {
+        return joinString(strs, "", "", ",");
+    }
+
+    public static String subString(String oriStr, int beginIndex, int len) {
+        String str = "";
+        int strlen = oriStr.length();
+        beginIndex = beginIndex - 1;
+        if (strlen <= beginIndex) {
+            System.out.println("out of " + oriStr
+                    + "'s length, please recheck!");
+        } else if (strlen <= beginIndex + len) {
+            str = oriStr.substring(beginIndex);
+        } else {
+            str = oriStr.substring(beginIndex, beginIndex + len);
+        }
+        return str;
+    }
+
+    public static String padLeft(String oriStr, int len, char alexin) {
+        StringBuilder sb = new StringBuilder();
+        int strlen = oriStr.length();
+        if (strlen < len) {
+            for (int i = 0; i < len - strlen; i++) {
+                sb.append(alexin);
+            }
+        }
+        sb.append(oriStr);
+        return sb.toString();
+    }
+
+    public static String padRight(String oriStr, int len, char alexin) {
+        StringBuilder sb = new StringBuilder();
+        int strlen = oriStr.length();
+        if (strlen < len) {
+            for (int i = 0; i < len - strlen; i++) {
+                sb.append(alexin);
+            }
+        }
+        sb.append(oriStr);
+        return sb.toString();
+    }
+
+    public static String joinString(String[] arr, String sdelimiter) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < arr.length; i++) {
+            sb.append(arr[i]);
+            if (i < arr.length - 1)
+                sb.append(sdelimiter);
+        }
+        return sb.toString();
+    }
+
+    public static String joinString(String[] arr) {
+        return joinString(arr, ",");
+    }
+
+    public static String urlDecode(String str) {
+        try {
+            return URLDecoder.decode(str, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            return str;
+        }
+    }
+
+    public static String uuid() {
+
+        return UUID.randomUUID().toString();
+    }
+
+    public static String removeHTMLTag(String htmlStr) {
+
+        htmlStr = SCRIPT_PATTERN.matcher(htmlStr).replaceAll(""); //过滤script标签
+
+        htmlStr = STYLE_PATTERN.matcher(htmlStr).replaceAll(""); //过滤style标签
+
+        htmlStr = HTML_PATTERN.matcher(htmlStr).replaceAll(""); //过滤html标签
+
+        return htmlStr; //返回文本字符串
+
+    }
+
+    public static String getChinese(String str) {
+        return CHINESE_PATTERN.matcher(str).replaceAll("");
+    }
+
+    public static String removeNumber(String str) {
+        return str.replaceAll("\\d+", "");
+    }
+
+    public static String toDBC(String input) {
+        char[] c = input.toCharArray();
+        for (int i = 0; i < c.length; i++) {
+            if (c[i] == '\u3000') {
+                c[i] = ' ';
+            } else if (c[i] > '\uFF00' && c[i] < '\uFF5F') {
+                c[i] = (char) (c[i] - 65248);
+            }
+        }
+        return new String(c);
+    }
+
+    public static boolean isChinese(char c) {
+        // 根据字节码判断
+        return c >= 0x4E00 && c <= 0x9FA5;
+    }
+
+    public static boolean isContainsChinese(String input) {
+
+        char[] chars = input.toCharArray();
+        for (char a : chars) {
+            if (isChinese(a)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static boolean isPunctuation(char c) {
+        Character.UnicodeBlock ub = Character.UnicodeBlock.of(c);
+        // punctuation, spacing, and formatting characters
+        return ub == Character.UnicodeBlock.GENERAL_PUNCTUATION
+                // symbols and punctuation in the unified Chinese, Japanese and Korean script
+                || ub == Character.UnicodeBlock.CJK_SYMBOLS_AND_PUNCTUATION
+                // fullwidth character or a halfwidth character
+                || ub == Character.UnicodeBlock.HALFWIDTH_AND_FULLWIDTH_FORMS
+                // vertical glyph variants for east Asian compatibility
+                || ub == Character.UnicodeBlock.CJK_COMPATIBILITY_FORMS
+                // vertical punctuation for compatibility characters with the Chinese Standard GB 18030
+                || ub == Character.UnicodeBlock.VERTICAL_FORMS
+                // ascii
+                || ub == Character.UnicodeBlock.BASIC_LATIN;
+    }
+
+    private static boolean isUserDefined(char c) {
+        Character.UnicodeBlock ub = Character.UnicodeBlock.of(c);
+        return ub == Character.UnicodeBlock.NUMBER_FORMS
+                || ub == Character.UnicodeBlock.ENCLOSED_ALPHANUMERICS
+                || ub == Character.UnicodeBlock.LETTERLIKE_SYMBOLS
+                || c == '\ufeff'
+                || c == '\u00a0';
+
+    }
+
+    public static boolean isMessy(String str) {
+        float chlength = 0;
+        float count = 0;
+        for (int i = 0; i < str.length(); i++) {
+            char c = str.charAt(i);
+            if (!(isPunctuation(c) || isUserDefined(c))) {
+                if (!isChinese(c)) {
+                    count = count + 1;
+                }
+                chlength++;
+            }
+        }
+        if (chlength == 0) {
+            return false;
+        }
+        float result = count / chlength;
+        return result > 0.3;
+    }
 }

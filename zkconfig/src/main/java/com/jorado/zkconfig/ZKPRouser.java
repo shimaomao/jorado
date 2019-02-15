@@ -14,6 +14,7 @@ public class ZKPRouser {
 
     static class RouseTF implements ThreadFactory {
 
+        @Override
         public Thread newThread(Runnable r) {
             Thread t = new Thread(r, "RouseScheduledExecutorThread");
             t.setDaemon(true);
@@ -26,7 +27,7 @@ public class ZKPRouser {
             Executors.newSingleThreadScheduledExecutor(new RouseTF());
 
     public static void submit(Runnable cmd, long periodMilliSeconds) {
-        ScheduledService.scheduleAtFixedRate(cmd, 10l, periodMilliSeconds, TimeUnit.MILLISECONDS);
+        ScheduledService.scheduleAtFixedRate(cmd, 10L, periodMilliSeconds, TimeUnit.MILLISECONDS);
     }
 
     private static boolean active = false;

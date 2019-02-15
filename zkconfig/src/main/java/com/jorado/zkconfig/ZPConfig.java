@@ -17,7 +17,7 @@ public abstract class ZPConfig {
         String result = String.format("%.3f", v);
         v = Float.parseFloat(result);
         this.setVersion(v);
-        String data = JsonUtils.toGson(this);
+        String data = JsonUtils.toJson(this);
         watcher.writeData(this.path, data);
     }
 

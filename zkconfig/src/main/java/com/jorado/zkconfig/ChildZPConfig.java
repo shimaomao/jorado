@@ -9,8 +9,9 @@ public abstract class ChildZPConfig<T> extends ZPConfig {
     @Override
     public void adjust() {
         List<String> children = ConfigFactory.getWatcher().getChildren(path, false);
-        if (children.size() <= 0)
+        if (children.size() <= 0) {
             return;
+        }
         List<T> childrenNodes = new ArrayList<>();
         for (String child : children) {
             childrenNodes.add(parse(child));

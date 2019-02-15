@@ -89,7 +89,7 @@ public class ConfigFactory {
             System.out.println("++++++++++++++++++++++++++++++++++++++++++");
         };
 
-        watcher.createConnection();
+        watcher.open();
         List<String> paths = watcher.getChildren(appPath, false);
         if (paths == null)
             return;

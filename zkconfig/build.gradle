@@ -1,10 +1,5 @@
 apply plugin: 'maven-publish'
 
-group = "com.jorado"
-version = "1.0.0-SNAPSHOT"
-
-defaultTasks 'clean', 'jar'
-
 task sourceJar(type: Jar) {
     from sourceSets.main.allJava
 }
@@ -33,5 +28,5 @@ publishing {
 
 dependencies {
     compile project(':core')
-    compile "org.apache.zookeeper:zookeeper:3.4.6"
+    compile "org.apache.zookeeper:zookeeper:3.4.12"
 }
