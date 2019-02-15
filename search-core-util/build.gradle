@@ -27,11 +27,6 @@ publishing {
     }
 }
 
-
-ext {
-
-}
-
 dependencies {
     compile project(":search-core-model")
 }

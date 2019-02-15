@@ -16,11 +16,11 @@ allprojects {
     System.properties["file.encoding"] = "UTF-8"
 
     repositories {
-        maven { url 'http://172.17.0.59:8081/nexus/content/groups/public' }
-        maven { url 'http://maven.zhaopin.com:8000/nexus/content/groups/public' }
-        maven { url 'http://maven.aliyun.com/nexus/content/groups/public/' }
-        maven { url 'https://repo.maven.apache.org/maven2/' }
-        maven { url 'http://maven.restlet.org/' }
+        maven { url "http://172.17.0.59:8081/nexus/content/groups/public" }
+        maven { url "http://maven.zhaopin.com:8000/nexus/content/groups/public" }
+        maven { url "http://maven.aliyun.com/nexus/content/groups/public/" }
+        maven { url "https://repo.maven.apache.org/maven2/" }
+        maven { url "http://maven.restlet.org/" }
         mavenLocal()
         mavenCentral()
         jcenter()
@@ -30,23 +30,23 @@ allprojects {
 subprojects {
 
     group = "com.jorado"
-    version = '1.0'
+    version = "1.0"
 
     defaultTasks "clean", "jar"
 
-    apply plugin: 'java'
-    apply plugin: 'war'
-    apply plugin: 'idea'
-    apply plugin: 'org.sonarqube'
+    apply plugin: "java"
+    apply plugin: "war"
+    apply plugin: "idea"
+    apply plugin: "org.sonarqube"
 
     sourceCompatibility = 1.8
     targetCompatibility = 1.8
 
-    [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+    [compileJava, compileTestJava]*.options*.encoding = "UTF-8"
 
 //    configurations.all {
-//        resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
-//        resolutionStrategy.cacheDynamicVersionsFor 0, 'seconds'
+//        resolutionStrategy.cacheChangingModulesFor 0, "seconds"
+//        resolutionStrategy.cacheDynamicVersionsFor 0, "seconds"
 //    }
 //
     ext {
@@ -63,20 +63,22 @@ subprojects {
     }
 
     ext {
-        solrVersion = '5.2.1'
-        fastjsonVersion = '1.2.8'
-        gsonVersion = '2.8.2'
-        guavaVersion = '23.0'
+        springVersion = "4.3.16.RELEASE"
+        solrVersion = "5.2.1"
+        fastjsonVersion = "1.2.8"
+        gsonVersion = "2.8.2"
+        guavaVersion = "23.0"
         httpClientVersion = "4.5.5"
+        jacksonVersion="2.9.7"
     }
 
     dependencies {
-        compile 'org.slf4j:slf4j-api:+'
-        compile 'org.slf4j:slf4j-log4j12:+'
-        compile 'joda-time:joda-time:+'
-        compile 'com.google.guava:guava:+'
-        compile 'org.modelmapper:modelmapper:+'
-        compile 'org.apache.commons:commons-lang3:+'
+        compile "org.slf4j:slf4j-api:+"
+        compile "org.slf4j:slf4j-log4j12:+"
+        compile "joda-time:joda-time:+"
+        compile "com.google.guava:guava:+"
+        compile "org.modelmapper:modelmapper:+"
+        compile "org.apache.commons:commons-lang3:+"
 
         testCompile("junit:junit:4.12")
         testCompile("org.assertj:assertj-core:3.9.1")

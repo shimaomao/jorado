@@ -30,5 +30,4 @@ publishing {
 dependencies {
     compile project(':core')
     compile project(':logger')
-    compile("org.apache.httpcomponents:httpclient:$httpClientVersion")
 }
