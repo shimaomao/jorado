@@ -1,9 +1,10 @@
 package com.jorado.search.hotword.service.exportimpl;
 
+import com.jorado.dict.DictUtils;
 import com.jorado.search.hotword.model.Word;
 import com.jorado.search.hotword.model.enums.HotWordType;
 import com.jorado.search.hotword.util.WordUtils;
-import com.jorado.basedata.BaseDataUtils;
+
 import com.jorado.logger.EventClient;
 import com.jorado.logger.util.IOUtils;
 import com.jorado.logger.util.StringUtils;
@@ -201,7 +202,7 @@ public final class CompanyWordExporter extends BaseWordExporter {
             return null;
         }
 
-        if (!StringUtils.isNullOrWhiteSpace(BaseDataUtils.getLocationCode(word))) {
+        if (!StringUtils.isNullOrWhiteSpace(DictUtils.getLocationCode(word))) {
             return null;
         }
 
@@ -229,6 +230,6 @@ public final class CompanyWordExporter extends BaseWordExporter {
             return word;
         }
 
-        return BaseDataUtils.removeCity(word, "中国,香港");
+        return DictUtils.removeCity(word, "中国,香港");
     }
 }

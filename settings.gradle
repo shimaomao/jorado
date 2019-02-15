@@ -10,7 +10,7 @@ include 'logger-core'
 include 'logger-dubbo'
 include 'template-engine'
 include 'word2vec'
-include 'ik-admin'
+include 'admin'
 include 'ik'
 include 'ik-company'
 include 'ik-position'
@@ -24,3 +24,4 @@ include "search-core-model"
 include "search-core-util"
 include "search-core-solrextend"
 include "qos"
+include "dict"

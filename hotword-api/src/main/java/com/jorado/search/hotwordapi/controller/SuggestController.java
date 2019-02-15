@@ -43,7 +43,7 @@ public class SuggestController {
                 result.getData().getWords().add(word);
             }
 
-            for (String debugInfo : result_company.getDebugInfo()) {
+            for (Object debugInfo : result_company.getDebugInfo()) {
                 result.getDebugInfo().add(debugInfo);
             }
 

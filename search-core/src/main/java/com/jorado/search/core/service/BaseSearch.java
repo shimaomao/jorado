@@ -3,7 +3,6 @@ package com.jorado.search.core.service;
 import com.jorado.search.core.ClientFilter;
 import com.jorado.search.core.QueryBuilder;
 import com.jorado.search.core.SearchContext;
-import com.jorado.search.core.config.AppSettings;
 import com.jorado.search.core.consts.ErrorConsts;
 import com.jorado.search.core.exception.*;
 import com.jorado.search.core.model.GroupResult;
@@ -18,6 +17,7 @@ import com.jorado.logger.util.Stopwatch;
 import com.jorado.logger.util.StringUtils;
 import com.jorado.core.Result;
 import com.jorado.core.ResultStatus;
+import com.jorado.zkconfig.AppSettings;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.response.*;
 import org.apache.solr.common.SolrDocument;
@@ -180,13 +180,13 @@ public abstract class BaseSearch<T> implements SearchService<T> {
 
         } finally {
 
-            if (null != searchInfo && (searchInfo.isDebug() || AppSettings.getInstance().debugEnabled())) {
+            if (null != searchInfo && (searchInfo.isDebug() || AppSettings.getInstance().debug())) {
                 result.setDebugInfo(debugInfo);
                 eventBuilder.addData("debug", debugInfo);
             }
 
             //打印日志
-            if (eventBuilder.getTarget().isError() || AppSettings.getInstance().outputLog()) {
+            if (eventBuilder.getTarget().isError() || AppSettings.getInstance().log()) {
                 eventBuilder.addData(searchContext.getPlayload()).addData("searchInfo", searchInfo).setMessage(result.getMessage()).asyncSubmit();
             }
         }

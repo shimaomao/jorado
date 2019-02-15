@@ -1,6 +1,5 @@
 package com.jorado.search.hotwordapi.controller;
 
-import com.jorado.search.core.config.AppSettings;
 import com.jorado.search.core.config.Solr;
 import com.jorado.search.core.config.SolrConfig;
 import com.jorado.search.core.exception.NoAssignSolrException;
@@ -24,6 +23,7 @@ import com.jorado.logger.EventClient;
 import com.jorado.logger.util.StringUtils;
 import com.jorado.core.Result;
 import com.jorado.core.ResultStatus;
+import com.jorado.zkconfig.AppSettings;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -128,7 +128,7 @@ public class HomeController {
 
         } finally {
             //打印日志
-            if (eventBuilder.getTarget().isError() || AppSettings.getInstance().outputLog()) {
+            if (eventBuilder.getTarget().isError() || AppSettings.getInstance().log()) {
                 eventBuilder.addData("type", "test").addData("kw", kw).addData("rows", rows).setMessage(result.getMessage()).asyncSubmit();
             }
         }

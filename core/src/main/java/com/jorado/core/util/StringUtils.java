@@ -1196,6 +1196,10 @@ public final class StringUtils {
         return location;
     }
 
+    public static String removeCommaValue(String values, String value) {
+        return StringUtils.joinByComma(CollectionUtils.remove(StringUtils.splitByComma(values), value));
+    }
+
     public static String joinByComma(String[] values) {
         return joinBy(values, ",");
     }

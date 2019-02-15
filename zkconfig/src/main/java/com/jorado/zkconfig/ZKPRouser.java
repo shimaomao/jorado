@@ -7,9 +7,6 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 
-/**
- * Created by Administrator on 14-10-21.
- */
 public class ZKPRouser {
 
     static class RouseTF implements ThreadFactory {
@@ -23,8 +20,7 @@ public class ZKPRouser {
 
     }
 
-    final public static ScheduledExecutorService ScheduledService =
-            Executors.newSingleThreadScheduledExecutor(new RouseTF());
+    public final static ScheduledExecutorService ScheduledService = Executors.newSingleThreadScheduledExecutor(new RouseTF());
 
     public static void submit(Runnable cmd, long periodMilliSeconds) {
         ScheduledService.scheduleAtFixedRate(cmd, 10L, periodMilliSeconds, TimeUnit.MILLISECONDS);
@@ -48,6 +44,4 @@ public class ZKPRouser {
             }, 10 * 1000);
         }
     }
-
-
 }

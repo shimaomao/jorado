@@ -16,7 +16,6 @@ import java.util.concurrent.locks.ReentrantLock;
 import static com.jorado.core.util.ConcurrentLinkedHashMap.DrainStatus.IDLE;
 import static com.jorado.core.util.ConcurrentLinkedHashMap.DrainStatus.PROCESSING;
 import static com.jorado.core.util.ConcurrentLinkedHashMap.DrainStatus.REQUIRED;
-import static jorado.util.ConcurrentLinkedHashMap.DrainStatus.*;
 import static java.util.Collections.*;
 
 /**

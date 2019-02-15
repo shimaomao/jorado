@@ -28,6 +28,7 @@ publishing {
 }
 
 dependencies {
+    compile project(':dict')
     compile project(':logger')
     compile project(':lexicon')
 }

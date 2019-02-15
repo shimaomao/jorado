@@ -173,7 +173,7 @@ public final class ConfigUtils {
                 }
             }
         }
-        for (Map.Entry<Object, Object> entry : new HashMap<Object, Object>(result).entrySet()) {
+        for (Map.Entry<Object, Object> entry : new HashMap<>(result).entrySet()) {
             String key = (String) entry.getKey();
             String value = (String) entry.getValue();
             if (StringUtils.isNotEmpty(value) && value.contains(REF)) {

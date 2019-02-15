@@ -1,8 +1,9 @@
 package com.jorado.search.core.config;
 
-import com.jorado.logger.util.JsonUtils;
 import com.jorado.logger.util.StringUtils;
-import com.jorado.zookeeper.LoadConfig;
+import com.jorado.zkconfig.ZKPSettings;
+import com.jorado.zkconfig.ConfigFactory;
+import com.jorado.zkconfig.ZKPConfig;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -10,24 +11,21 @@ import java.util.Map;
 /**
  * 排序配置
  */
-public class SortConfig extends HashMap<String, HashMap<String, String>> {
+public class SortConfig extends ZKPConfig<HashMap<String, String>> {
 
-    private static LoadConfig remoteConfig = LoadConfig.newInstance("sort", () -> {
-        adjust();
-        return null;
-    });
+    final static String ZKP_PATH = ZKPSettings.ZOOKEEPER_PATH + "/" + SortConfig.class.getName();
 
-    private static volatile SortConfig config;
+    static SortConfig settings;
 
-    public static SortConfig getInstance() {
-        if (null == config) {
-            adjust();
+    public synchronized static SortConfig getInstance() {
+        if (settings == null) {
+            settings = ConfigFactory.get(ZKP_PATH);
         }
-        return config;
+        return settings;
     }
 
-    private static void adjust() {
-        config = JsonUtils.fromJson(remoteConfig.getBody(), SortConfig.class);
+    @Override
+    public void adjust() {
     }
 
     public Map<String, String> getSortParam(String sortType, String client, String defaultSort) {

@@ -1,6 +1,5 @@
 package com.jorado.search.hotword.service.suggestimpl;
 
-import com.jorado.search.core.config.AppSettings;
 import com.jorado.search.core.config.Solr;
 import com.jorado.search.core.config.SolrConfig;
 import com.jorado.search.core.exception.NoAssignSolrException;
@@ -25,6 +24,7 @@ import com.jorado.logger.EventClient;
 import com.jorado.logger.util.StringUtils;
 import com.jorado.core.Result;
 import com.jorado.core.ResultStatus;
+import com.jorado.zkconfig.AppSettings;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -127,7 +127,7 @@ public final class SuggestServiceImpl implements SuggestService {
 
         } finally {
             //打印日志
-            if (eventBuilder.getTarget().isError() || AppSettings.getInstance().outputLog()) {
+            if (eventBuilder.getTarget().isError() || AppSettings.getInstance().log()) {
                 eventBuilder.addData("type", flag.toString()).addData("kw", kw).addData("rows", rows).setMessage(result.getMessage()).asyncSubmit();
             }
         }

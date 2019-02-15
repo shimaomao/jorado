@@ -18,10 +18,10 @@ public class ZKPManager implements Watcher, AutoCloseable {
 
     private ZooKeeper zk = null;
     private CountDownLatch downLoatch = new CountDownLatch(1);
-    public IZKPWatcher updateHandler, expiredHandler, childrenChangedHandler, connectionHandler;
+    public ZKPWatcher updateHandler, expiredHandler, childrenChangedHandler, connectionHandler;
 
     public void open() {
-        open(AppProperties.ZOOKEEPER_ADDRESS);
+        open(ZKPSettings.ZOOKEEPER_ADDRESS);
     }
 
     public void open(String path) {

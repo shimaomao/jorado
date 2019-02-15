@@ -2,7 +2,7 @@ package com.jorado.fasttext;
 
 import com.mayabot.mynlp.fasttext.FastText;
 import com.mayabot.mynlp.fasttext.FloatStringPair;
-import com.jorado.basedata.BaseDataUtils;
+
 
 import java.util.AbstractMap;
 import java.util.ArrayList;
@@ -71,7 +71,7 @@ public class FastTexter {
 
         List<Map.Entry<String, Float>> results = new ArrayList<>();
         for (FloatStringPair pair : pairs) {
-            results.add(new AbstractMap.SimpleEntry<>(BaseDataUtils.getSubJobTypeName(pair.second.replace(LABEL_FLAG, "")), pair.first));
+            results.add(new AbstractMap.SimpleEntry<>(DictUtils.getSubJobTypeName(pair.second.replace(LABEL_FLAG, "")), pair.first));
         }
         return results;
     }

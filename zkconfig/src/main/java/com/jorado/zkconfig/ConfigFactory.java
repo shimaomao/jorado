@@ -11,16 +11,16 @@ public class ConfigFactory {
     private static final Logger logger = LoggerFactory.getLogger(ConfigFactory.class);
 
     private static ZKPManager watcher = new ZKPManager();
-    private static HashMap<String, ZPConfig> configMap = new HashMap<>();
-    private static HashMap<String, ZPConfig> appConfigs = new HashMap<>();
-    private static AbsConfigCreater remoteCreater = new RemoteCreater(watcher);
-    private static AbsConfigCreater fileCreater = new FileCreater();
+    private static HashMap<String, ZKPConfig> configMap = new HashMap<>();
+    private static HashMap<String, ZKPConfig> appConfigs = new HashMap<>();
+    private static ConfigLoader remoteLoader = new RemoteLoader(watcher);
+    private static ConfigLoader localLoader = new LocalLoader();
 
     static {
-        init(AppProperties.ZOOKEEPER_PATH);
+        init(ZKPSettings.ZOOKEEPER_PATH);
     }
 
-    public static boolean contain(String path) {
+    public static boolean contains(String path) {
         return configMap.containsKey(path);
     }
 
@@ -30,15 +30,15 @@ public class ConfigFactory {
 
     public static void init(String appPath) {
         watcher.connectionHandler = (path, watcher) -> {
-            List<IZKPWatcher> handlers = WatcherPool.getList(WatcherPool.HandleMethod.CONNECT);
-            for (IZKPWatcher handler : handlers) {
+            List<ZKPWatcher> handlers = WatcherPool.getList(WatcherPool.HandleMethod.CONNECT);
+            for (ZKPWatcher handler : handlers) {
                 handler.watch(path, watcher);
             }
         };
         watcher.updateHandler = (path, watcher) -> {
             try {
-                List<IZKPWatcher> handlers = WatcherPool.getList(WatcherPool.HandleMethod.UPDATE);
-                for (IZKPWatcher handler : handlers) {
+                List<ZKPWatcher> handlers = WatcherPool.getList(WatcherPool.HandleMethod.UPDATE);
+                for (ZKPWatcher handler : handlers) {
                     handler.watch(path, watcher);
                 }
                 build(path);
@@ -59,13 +59,13 @@ public class ConfigFactory {
         };
         watcher.expiredHandler = (path, watcher) -> {
             try {
-                List<IZKPWatcher> handlers = WatcherPool.getList(WatcherPool.HandleMethod.EXPIRED);
-                for (IZKPWatcher handler : handlers) {
+                List<ZKPWatcher> handlers = WatcherPool.getList(WatcherPool.HandleMethod.EXPIRED);
+                for (ZKPWatcher handler : handlers) {
                     handler.watch(path, watcher);
                 }
                 System.out.println("zookeeper session 过期");
                 System.out.println(path);
-                ZKPRouser.reload(AppProperties.ZOOKEEPER_PATH);
+                ZKPRouser.reload(ZKPSettings.ZOOKEEPER_PATH);
             } catch (Exception ex) {
 
             }
@@ -80,8 +80,8 @@ public class ConfigFactory {
                 appConfigs.get(path).updateConfig(appConfigs.get(path));
             }
             watcher.getChildren(path, true);
-            List<IZKPWatcher> handlers = WatcherPool.getList(WatcherPool.HandleMethod.CHANGE);
-            for (IZKPWatcher handler : handlers) {
+            List<ZKPWatcher> handlers = WatcherPool.getList(WatcherPool.HandleMethod.CHANGE);
+            for (ZKPWatcher handler : handlers) {
                 handler.watch(path, watcher);
             }
             System.out.println("childrenChangedHandler:" + path);
@@ -91,53 +91,55 @@ public class ConfigFactory {
 
         watcher.open();
         List<String> paths = watcher.getChildren(appPath, false);
-        if (paths == null)
+        if (paths == null) {
             return;
+        }
         for (String path : paths) {
             build(appPath + "/" + path);
         }
     }
 
     public synchronized static void build(String path) {
-        ZPConfig rconfig = remoteCreater.get(path);
-        ZPConfig fconfig = fileCreater.get(path);
 
-        if (rconfig == null && fconfig == null) {
+        ZKPConfig rconfig = remoteLoader.get(path);
+        ZKPConfig lconfig = localLoader.get(path);
+
+        if (rconfig == null && lconfig == null) {
             System.out.println("没有获得任何配置文件！");
             return;
         }
 
         if (rconfig == null) {
-            fconfig.adjust();
-            configMap.put(path, fconfig);
+            lconfig.adjust();
+            configMap.put(path, lconfig);
             return;
         }
 
-        if (fconfig == null) {
+        if (lconfig == null) {
             rconfig.adjust();
             configMap.put(path, rconfig);
-            remoteCreater.save(path, rconfig);
+            remoteLoader.save(path, rconfig);
             return;
         }
 
-        if (fconfig.getVersion() > rconfig.getVersion()) {
-            fconfig.adjust();
-            configMap.put(path, fconfig);
+        if (lconfig.getVersion() > rconfig.getVersion()) {
+            lconfig.adjust();
+            configMap.put(path, lconfig);
         } else {
             rconfig.adjust();
             configMap.put(path, rconfig);
-            remoteCreater.save(path, rconfig);
+            remoteLoader.save(path, rconfig);
         }
     }
 
-    public synchronized static ZPConfig get(String path) {
+    public synchronized static <T> T get(String path) {
         if (!configMap.containsKey(path)) {
             build(path);
         }
-        ZPConfig config = configMap.get(path);
+        ZKPConfig config = configMap.get(path);
         if (!appConfigs.containsKey(path)) {
             appConfigs.put(path, config);
         }
-        return config;
+        return (T) config;
     }
 }

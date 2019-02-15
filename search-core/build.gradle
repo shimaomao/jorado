@@ -1,8 +1,9 @@
 
 dependencies {
-    compile project(":search-core-model")
     compile project(":logger")
-
+    compile project(":zkconfig")
+    compile project(":search-core-model")
+    
     compile("org.apache.solr:solr-solrj:$solrVersion")
     compile("org.springframework:spring-core:$springVersion")
     compile("org.springframework:spring-context:$springVersion")

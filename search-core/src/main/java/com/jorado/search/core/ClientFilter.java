@@ -165,7 +165,7 @@ public final class ClientFilter {
             return false;
         }
 
-        for (String ip : BlackConfig.getInstance().getBaiduSpiderScope()) {
+        for (String ip : BlackConfig.getInstance().getSpiderScope()) {
             if (searchInfo.getClientIP().startsWith(ip)) {
                 return true;
             }

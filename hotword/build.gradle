@@ -1,5 +1,6 @@
 
 dependencies {
+    compile project(":dict")
     compile project(":search-core")
     compile project(":search-core-model")
     compile project(":search-core-util")

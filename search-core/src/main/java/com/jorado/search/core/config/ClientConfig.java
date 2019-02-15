@@ -1,7 +1,8 @@
 package com.jorado.search.core.config;
 
-import com.jorado.logger.util.JsonUtils;
-import com.jorado.zookeeper.LoadConfig;
+import com.jorado.zkconfig.ZKPSettings;
+import com.jorado.zkconfig.ConfigFactory;
+import com.jorado.zkconfig.ZKPConfig;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -11,14 +12,18 @@ import java.util.Map;
 /**
  * 客户端配置
  */
-public class ClientConfig {
+public class ClientConfig extends ZKPConfig {
 
-    private static LoadConfig remoteConfig = LoadConfig.newInstance("client", () -> {
-        adjust();
-        return null;
-    });
+    final static String ZKP_PATH = ZKPSettings.ZOOKEEPER_PATH + "/" + ClientConfig.class.getName();
 
-    private static volatile ClientConfig config;
+    static ClientConfig settings;
+
+    public synchronized static ClientConfig getInstance() {
+        if (settings == null) {
+            settings = ConfigFactory.get(ZKP_PATH);
+        }
+        return settings;
+    }
 
     private int verifyClient;
 
@@ -28,15 +33,8 @@ public class ClientConfig {
 
     private String field;
 
-    public static ClientConfig getInstance() {
-        if (null == config) {
-            adjust();
-        }
-        return config;
-    }
-
-    private static void adjust() {
-        config = JsonUtils.fromJson(remoteConfig.getBody(), ClientConfig.class);
+    @Override
+    public void adjust() {
         clientMap.clear();
         for (Client client : clientList) {
             clientMap.put(client.getName().toLowerCase(), client);

@@ -1,92 +1,93 @@
 package com.jorado.search.core.config;
 
-import com.jorado.logger.util.JsonUtils;
-import com.jorado.zookeeper.LoadConfig;
+import com.jorado.zkconfig.ZKPSettings;
+import com.jorado.zkconfig.ConfigFactory;
+import com.jorado.zkconfig.ZKPConfig;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 /**
  * 黑名单配置
  */
-public class BlackConfig extends HashMap<String, List<String>> {
+public class BlackConfig extends ZKPConfig {
 
-    private static LoadConfig remoteConfig = LoadConfig.newInstance("black", () -> {
-        adjust();
-        return null;
-    });
+    final static String ZKP_PATH = ZKPSettings.ZOOKEEPER_PATH + "/" + BlackConfig.class.getName();
 
-    private static volatile BlackConfig config;
+    static BlackConfig settings;
 
-    public static BlackConfig getInstance() {
-        if (null == config) {
-            adjust();
+    public synchronized static BlackConfig getInstance() {
+        if (settings == null) {
+            settings = ConfigFactory.get(ZKP_PATH);
         }
-        return config;
+        return settings;
     }
 
-    /**
-     * 获取白名单ip
-     *
-     * @return
-     */
+    @Override
+    public void adjust() {
+
+    }
+
+    private List<String> whiteIPs;
+    private List<String> whiteIPScope;
+    private List<String> blackIPs;
+    private List<String> blackIPScope;
+    private List<String> spiderIPs;
+    private List<String> spiderScope;
+    private List<String> genderWords;
+
     public List<String> getWhiteIPs() {
-        List<String> datas = get("whiteIPs");
-        return null == datas ? new ArrayList<>() : datas;
+        return whiteIPs;
     }
 
-    /**
-     * 获取白名单ip范围
-     *
-     * @return
-     */
+    public void setWhiteIPs(List<String> whiteIPs) {
+        this.whiteIPs = whiteIPs;
+    }
+
     public List<String> getWhiteIPScope() {
-        List<String> datas = get("whiteIPScope");
-        return null == datas ? new ArrayList<>() : datas;
+        return whiteIPScope;
     }
 
-    /**
-     * 获取黑名单ip
-     *
-     * @return
-     */
+    public void setWhiteIPScope(List<String> whiteIPScope) {
+        this.whiteIPScope = whiteIPScope;
+    }
+
     public List<String> getBlackIPs() {
-        List<String> datas = get("blackIPs");
-        return null == datas ? new ArrayList<>() : datas;
+        return blackIPs;
     }
 
-    /**
-     * 获取黑名单ip范围
-     *
-     * @return
-     */
+    public void setBlackIPs(List<String> blackIPs) {
+        this.blackIPs = blackIPs;
+    }
+
     public List<String> getBlackIPScope() {
-        List<String> datas = get("blackIPScope");
-        return null == datas ? new ArrayList<>() : datas;
+        return blackIPScope;
     }
 
-    /**
-     * 获取百度爬虫ip范围
-     *
-     * @return
-     */
-    public List<String> getBaiduSpiderScope() {
-        List<String> datas = get("baiduSpiderScope");
-        return null == datas ? new ArrayList<>() : datas;
+    public void setBlackIPScope(List<String> blackIPScope) {
+        this.blackIPScope = blackIPScope;
     }
 
-    /**
-     * 获取性别歧视关键字
-     *
-     * @return
-     */
+    public List<String> getSpiderIPs() {
+        return spiderIPs;
+    }
+
+    public void setSpiderIPs(List<String> spiderIPs) {
+        this.spiderIPs = spiderIPs;
+    }
+
+    public List<String> getSpiderScope() {
+        return spiderScope;
+    }
+
+    public void setSpiderScope(List<String> spiderScope) {
+        this.spiderScope = spiderScope;
+    }
+
     public List<String> getGenderWords() {
-        List<String> datas = get("genderWords");
-        return null == datas ? new ArrayList<>() : datas;
+        return genderWords;
     }
 
-    private static void adjust() {
-        config = JsonUtils.fromJson(remoteConfig.getBody(), BlackConfig.class);
+    public void setGenderWords(List<String> genderWords) {
+        this.genderWords = genderWords;
     }
 }

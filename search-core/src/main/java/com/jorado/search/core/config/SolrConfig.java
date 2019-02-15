@@ -1,7 +1,8 @@
 package com.jorado.search.core.config;
 
-import com.jorado.logger.util.JsonUtils;
-import com.jorado.zookeeper.LoadConfig;
+import com.jorado.zkconfig.ZKPSettings;
+import com.jorado.zkconfig.ConfigFactory;
+import com.jorado.zkconfig.ZKPConfig;
 import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
@@ -12,31 +13,28 @@ import java.util.Map;
 /**
  * solr配置，需重构
  */
-public class SolrConfig {
+public class SolrConfig extends ZKPConfig {
 
-    private static LoadConfig remoteConfig = LoadConfig.newInstance("solr", () -> {
-        adjust();
-        return null;
-    });
+    final static String ZKP_PATH = ZKPSettings.ZOOKEEPER_PATH + "/" + SolrConfig.class.getName();
 
-    private static volatile SolrConfig config;
+    static SolrConfig settings;
 
-    private List<String> host;
-
-    public static SolrConfig getInstance() {
-        if (null == config) {
-            adjust();
+    public synchronized static SolrConfig getInstance() {
+        if (settings == null) {
+            settings = ConfigFactory.get(ZKP_PATH);
         }
-        return config;
+        return settings;
     }
 
-    private static void adjust() {
-        config = JsonUtils.fromJson(remoteConfig.getBody(), SolrConfig.class);
+    @Override
+    public void adjust() {
         solrMap.clear();
         for (Solr solr : solrList) {
             solrMap.put(solr.getName().toLowerCase(), solr);
         }
     }
+
+    private List<String> host;
 
     private static List<Solr> solrList = new ArrayList<>();
 

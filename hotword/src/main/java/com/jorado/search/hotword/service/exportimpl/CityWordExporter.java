@@ -1,8 +1,9 @@
 package com.jorado.search.hotword.service.exportimpl;
 
+import com.jorado.dict.DictUtils;
 import com.jorado.search.hotword.model.Word;
 import com.jorado.search.hotword.model.enums.HotWordType;
-import com.jorado.basedata.BaseDataUtils;
+
 import org.springframework.context.annotation.Description;
 import org.springframework.stereotype.Service;
 
@@ -26,10 +27,10 @@ public final class CityWordExporter extends BaseWordExporter {
     @Override
     protected List<Word> initWord() {
         List<Word> words = new ArrayList<>();
-        if (null == BaseDataUtils.getLocationMap()) {
+        if (null == DictUtils.getLocationMap()) {
             return words;
         }
-        for (Map.Entry<String, String> entry : BaseDataUtils.getLocationMap().entrySet()) {
+        for (Map.Entry<String, String> entry : DictUtils.getLocationMap().entrySet()) {
             words.add(assemblyWord(entry.getKey()));
         }
         return words;

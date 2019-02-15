@@ -42,7 +42,7 @@ public class SuggestJsonpController {
             for (SuggestWord word : result_company.getData().getWords()) {
                 result.getData().getWords().add(word);
             }
-            for (String debugInfo : result_company.getDebugInfo()) {
+            for (Object debugInfo : result_company.getDebugInfo()) {
                 result.getDebugInfo().add(debugInfo);
             }
             return String.format("%s(%s)", callback, JsonUtils.toJson(result));

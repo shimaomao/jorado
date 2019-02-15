@@ -1,9 +1,10 @@
 package com.jorado.search.hotword.service.exportimpl;
 
+import com.jorado.dict.DictUtils;
 import com.jorado.search.hotword.model.Word;
 import com.jorado.search.hotword.model.enums.HotWordType;
 import com.jorado.search.hotword.util.WordUtils;
-import com.jorado.basedata.BaseDataUtils;
+
 import com.jorado.logger.util.ConvertUtils;
 import com.jorado.logger.util.IOUtils;
 import com.jorado.logger.util.StringUtils;
@@ -148,7 +149,7 @@ public final class PositionWordExporter extends BaseWordExporter {
         }
 
         if (removeCity) {
-            word = BaseDataUtils.removeCity(word);
+            word = DictUtils.removeCity(word);
         }
 
         for (Map.Entry<String, String> w : REPLACE_WORD_DICT.entrySet()) {

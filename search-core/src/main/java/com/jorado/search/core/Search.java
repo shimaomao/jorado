@@ -1,6 +1,5 @@
 package com.jorado.search.core;
 
-import com.jorado.search.core.config.AppSettings;
 import com.jorado.search.core.consts.ErrorConsts;
 import com.jorado.search.core.exception.ClientFilterException;
 import com.jorado.search.core.exception.NoAssignSolrException;
@@ -13,6 +12,7 @@ import com.jorado.logger.EventBuilder;
 import com.jorado.logger.EventClient;
 import com.jorado.core.Result;
 import com.jorado.core.ResultStatus;
+import com.jorado.zkconfig.AppSettings;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -80,7 +80,7 @@ public final class Search implements SearchService {
 
         } finally {
             //打印日志
-            if (eventBuilder.getTarget().isError() || AppSettings.getInstance().outputLog()) {
+            if (eventBuilder.getTarget().isError() || AppSettings.getInstance().log()) {
                 eventBuilder.addData("debug", result.getDebugInfo()).setMessage(result.getMessage()).asyncSubmit();
             }
         }

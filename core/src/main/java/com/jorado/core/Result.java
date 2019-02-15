@@ -7,8 +7,6 @@ import java.util.List;
 /**
  * @param <T>
  * @author len
- * @Description: Result
- * @date 2018年6月28日
  */
 public class Result<T> implements Serializable {
 

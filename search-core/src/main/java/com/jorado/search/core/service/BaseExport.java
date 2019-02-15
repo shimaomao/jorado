@@ -1,6 +1,5 @@
 package com.jorado.search.core.service;
 
-import com.jorado.search.core.config.AppSettings;
 import com.jorado.search.core.consts.ErrorConsts;
 import com.jorado.search.core.exception.ActionAfterException;
 import com.jorado.search.core.exception.ActionBeforeException;
@@ -10,6 +9,7 @@ import com.jorado.logger.EventBuilder;
 import com.jorado.logger.EventClient;
 import com.jorado.core.Result;
 import com.jorado.core.ResultStatus;
+import com.jorado.zkconfig.AppSettings;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -184,7 +184,7 @@ public abstract class BaseExport<T> implements ExportService {
 
         } finally {
             //打印日志
-            if (eventBuilder.getTarget().isError() || AppSettings.getInstance().outputLog()) {
+            if (eventBuilder.getTarget().isError() || AppSettings.getInstance().log()) {
                 eventBuilder.setMessage(result.getMessage()).addData("numFound", numFound).asyncSubmit();
             }
         }
