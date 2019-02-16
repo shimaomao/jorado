@@ -1,22 +1,6 @@
-/*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package com.jorado.qos.server.handler;
 
-import com.jorado.qos.common.QosConstants;
+import com.jorado.qos.Constants;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -39,8 +23,8 @@ public class LocalHostPermitHandler extends ChannelHandlerAdapter {
     public void handlerAdded(ChannelHandlerContext ctx) throws Exception {
         if (!acceptForeignIp) {
             if (!((InetSocketAddress) ctx.channel().remoteAddress()).getAddress().isLoopbackAddress()) {
-                ByteBuf cb = Unpooled.wrappedBuffer((QosConstants.BR_STR + "Foreign Ip Not Permitted."
-                        + QosConstants.BR_STR).getBytes());
+                ByteBuf cb = Unpooled.wrappedBuffer((Constants.BR_STR + "Foreign Ip Not Permitted."
+                        + Constants.BR_STR).getBytes());
                 ctx.writeAndFlush(cb).addListener(ChannelFutureListener.CLOSE);
             }
         }

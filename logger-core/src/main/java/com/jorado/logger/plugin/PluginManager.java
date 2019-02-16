@@ -22,7 +22,9 @@ public final class PluginManager {
         for (Map.Entry<String, Plugin> entry : context.getPlugins().entrySet()) {
             Plugin plugin = entry.getValue();
             try {
-                if (!plugin.enabled()) continue;
+                if (!plugin.enabled()) {
+                    continue;
+                }
                 plugin.run(context);
                 if (context.isCanceled()) {
                     context.getLogger().info(String.format("Event submit cancelled by plugin [%s] : refid=%s type=%s message=%s", plugin.getClass().getSimpleName(), context.getEvent().getReferenceId(), context.getEvent().getType(), context.getEvent().getMessage()));
@@ -60,8 +62,9 @@ public final class PluginManager {
         classes.forEach(n -> {
             try {
                 Plugin sortable = (Plugin) n.newInstance();
-                if (sortable.enabled())
+                if (sortable.enabled()) {
                     sortables.add(sortable);
+                }
             } catch (Exception ex) {
                 config.getLogger().error("Scan plugin error", ex);
             }

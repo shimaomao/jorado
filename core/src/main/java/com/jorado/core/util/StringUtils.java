@@ -7,6 +7,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /*
@@ -15,6 +16,7 @@ import java.util.regex.Pattern;
  */
 
 public final class StringUtils {
+
     private StringUtils() {
     }
 
@@ -58,6 +60,9 @@ public final class StringUtils {
      */
     public static final String[] EMPTY_STRING_ARRAY = new String[0];
 
+    public static final int INDEX_NOT_FOUND = -1;
+
+    private static final int PAD_LIMIT = 8192;
     private static final Pattern NUMBER_PATTERN = Pattern.compile("^[+\\-]?[0-9]+(\\.[.0-9]+)?[BSILFDbsilfd]?$");
     private static final Pattern SYMBOL_PATTERN = Pattern.compile("[^(_a-zA-Z0-9)]");
     private static final Pattern CLASS_NAME_PATTERN = Pattern.compile("[_a-zA-Z][\\._a-zA-Z0-9]+");
@@ -70,6 +75,7 @@ public final class StringUtils {
     private static final Pattern STYLE_PATTERN = Pattern.compile("<style[^>]*?>[\\s\\S]*?<\\/style>", Pattern.CASE_INSENSITIVE);
     private static final Pattern HTML_PATTERN = Pattern.compile("<[^>]+>", Pattern.CASE_INSENSITIVE);
     private static final Pattern SPECIALCHAR_PATTERN = Pattern.compile("[_\\-\"+－`~!@$%^&*()=|{}':;',\\[\\]<>/?~！@￥%……&*（）——|{}【】‘；：”“’。，、？（）★『』！○、]");
+    private static final Pattern KVP_PATTERN = Pattern.compile("([_.a-zA-Z0-9][-_.a-zA-Z0-9]*)[=](.*)"); //key value pair pattern.
 
     public static String getVaildName(String name) {
         return SYMBOL_PATTERN.matcher(name).replaceAll("_");
@@ -107,6 +113,16 @@ public final class StringUtils {
         return true;
     }
 
+    public static boolean isEquals(String s1, String s2) {
+        if (s1 == null && s2 == null) {
+            return true;
+        }
+        if (s1 == null || s2 == null) {
+            return false;
+        }
+        return s1.equals(s2);
+    }
+
     public static boolean isNamed(String value) {
         return NAMED_PATTERN.matcher(value).matches();
     }
@@ -117,6 +133,22 @@ public final class StringUtils {
 
     public static boolean isFunction(String value) {
         return FUNCTION_PATTERN.matcher(value).matches();
+    }
+
+    public static boolean isNoneEmpty(final String... ss) {
+        if (ArrayUtils.isEmpty(ss)) {
+            return false;
+        }
+        for (final String s : ss) {
+            if (isEmpty(s)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public static boolean isAnyEmpty(final String... ss) {
+        return !isNoneEmpty(ss);
     }
 
     public static boolean isEmpty(byte[] value) {
@@ -169,8 +201,9 @@ public final class StringUtils {
     }
 
     public static String valueOf(Object value) {
-        if (value == null)
+        if (value == null) {
             return "";
+        }
         return toString(value);
     }
 
@@ -1846,5 +1879,194 @@ public final class StringUtils {
         }
         float result = count / chlength;
         return result > 0.3;
+    }
+
+    public static int length(final CharSequence cs) {
+        return cs == null ? 0 : cs.length();
+    }
+
+    public static String repeat(final String str, final int repeat) {
+        // Performance tuned for 2.0 (JDK1.4)
+
+        if (str == null) {
+            return null;
+        }
+        if (repeat <= 0) {
+            return EMPTY;
+        }
+        final int inputLength = str.length();
+        if (repeat == 1 || inputLength == 0) {
+            return str;
+        }
+        if (inputLength == 1 && repeat <= PAD_LIMIT) {
+            return repeat(str.charAt(0), repeat);
+        }
+
+        final int outputLength = inputLength * repeat;
+        switch (inputLength) {
+            case 1:
+                return repeat(str.charAt(0), repeat);
+            case 2:
+                final char ch0 = str.charAt(0);
+                final char ch1 = str.charAt(1);
+                final char[] output2 = new char[outputLength];
+                for (int i = repeat * 2 - 2; i >= 0; i--, i--) {
+                    output2[i] = ch0;
+                    output2[i + 1] = ch1;
+                }
+                return new String(output2);
+            default:
+                final StringBuilder buf = new StringBuilder(outputLength);
+                for (int i = 0; i < repeat; i++) {
+                    buf.append(str);
+                }
+                return buf.toString();
+        }
+    }
+
+    public static String repeat(final String str, final String separator, final int repeat) {
+        if (str == null || separator == null) {
+            return repeat(str, repeat);
+        }
+        // given that repeat(String, int) is quite optimized, better to rely on it than try and splice this into it
+        final String result = repeat(str + separator, repeat);
+        return removeEnd(result, separator);
+    }
+
+    public static String removeEnd(final String str, final String remove) {
+        if (isAnyEmpty(str, remove)) {
+            return str;
+        }
+        if (str.endsWith(remove)) {
+            return str.substring(0, str.length() - remove.length());
+        }
+        return str;
+    }
+
+    public static String repeat(final char ch, final int repeat) {
+        final char[] buf = new char[repeat];
+        for (int i = repeat - 1; i >= 0; i--) {
+            buf[i] = ch;
+        }
+        return new String(buf);
+    }
+
+    public static String stripEnd(final String str, final String stripChars) {
+        int end;
+        if (str == null || (end = str.length()) == 0) {
+            return str;
+        }
+
+        if (stripChars == null) {
+            while (end != 0 && Character.isWhitespace(str.charAt(end - 1))) {
+                end--;
+            }
+        } else if (stripChars.isEmpty()) {
+            return str;
+        } else {
+            while (end != 0 && stripChars.indexOf(str.charAt(end - 1)) != INDEX_NOT_FOUND) {
+                end--;
+            }
+        }
+        return str.substring(0, end);
+    }
+
+    private static Map<String, String> parseKeyValuePair(String str, String itemSeparator) {
+        String[] tmp = str.split(itemSeparator);
+        Map<String, String> map = new HashMap<>(tmp.length);
+        for (int i = 0; i < tmp.length; i++) {
+            Matcher matcher = KVP_PATTERN.matcher(tmp[i]);
+            if (!matcher.matches()) {
+                continue;
+            }
+            map.put(matcher.group(1), matcher.group(2));
+        }
+        return map;
+    }
+
+    public static String getQueryStringValue(String qs, String key) {
+        Map<String, String> map = StringUtils.parseQueryString(qs);
+        return map.get(key);
+    }
+
+    public static Map<String, String> parseQueryString(String qs) {
+        if (isEmpty(qs)) {
+            return new HashMap<String, String>();
+        }
+        return parseKeyValuePair(qs, "\\&");
+    }
+
+    public static String toQueryString(Map<String, String> ps) {
+        StringBuilder buf = new StringBuilder();
+        if (ps != null && ps.size() > 0) {
+            for (Map.Entry<String, String> entry : new TreeMap<String, String>(ps).entrySet()) {
+                String key = entry.getKey();
+                String value = entry.getValue();
+                if (isNoneEmpty(key, value)) {
+                    if (buf.length() > 0) {
+                        buf.append("&");
+                    }
+                    buf.append(key);
+                    buf.append("=");
+                    buf.append(value);
+                }
+            }
+        }
+        return buf.toString();
+    }
+
+    public static String camelToSplitName(String camelName, String split) {
+        if (isEmpty(camelName)) {
+            return camelName;
+        }
+        StringBuilder buf = null;
+        for (int i = 0; i < camelName.length(); i++) {
+            char ch = camelName.charAt(i);
+            if (ch >= 'A' && ch <= 'Z') {
+                if (buf == null) {
+                    buf = new StringBuilder();
+                    if (i > 0) {
+                        buf.append(camelName.substring(0, i));
+                    }
+                }
+                if (i > 0) {
+                    buf.append(split);
+                }
+                buf.append(Character.toLowerCase(ch));
+            } else if (buf != null) {
+                buf.append(ch);
+            }
+        }
+        return buf == null ? camelName : buf.toString();
+    }
+
+    public static String replace(final String text, final String searchString, final String replacement) {
+        return replace(text, searchString, replacement, -1);
+    }
+
+    public static String replace(final String text, final String searchString, final String replacement, int max) {
+        if (isAnyEmpty(text, searchString) || replacement == null || max == 0) {
+            return text;
+        }
+        int start = 0;
+        int end = text.indexOf(searchString, start);
+        if (end == INDEX_NOT_FOUND) {
+            return text;
+        }
+        final int replLength = searchString.length();
+        int increase = replacement.length() - replLength;
+        increase = increase < 0 ? 0 : increase;
+        increase *= max < 0 ? 16 : max > 64 ? 64 : max;
+        final StringBuilder buf = new StringBuilder(text.length() + increase);
+        while (end != INDEX_NOT_FOUND) {
+            buf.append(text.substring(start, end)).append(replacement);
+            start = end + replLength;
+            if (--max == 0) {
+                break;
+            }
+            end = text.indexOf(searchString, start);
+        }
+        buf.append(text.substring(start));
+        return buf.toString();
     }
 }

@@ -21,13 +21,16 @@ public final class ListenerManager {
     }
 
     public static void run(EventContext context) {
-        if (context.getListeners().isEmpty())
+        if (context.getListeners().isEmpty()) {
             throw new NoListenerFoundException();
+        }
 
         for (Map.Entry<String, Listener> entry : context.getListeners().entrySet()) {
             Listener listener = entry.getValue();
             try {
-                if (!listener.enabled()) continue;
+                if (!listener.enabled()) {
+                    continue;
+                }
                 listener.run(context);
             } catch (Exception ex) {
                 context.getLogger().error(String.format("Run listener [%s] error", listener.getClass().getSimpleName()), ex);
@@ -70,8 +73,9 @@ public final class ListenerManager {
         classes.forEach(n -> {
             try {
                 Listener sortable = (Listener) n.newInstance();
-                if (sortable.enabled())
+                if (sortable.enabled()) {
                     sortables.add(sortable);
+                }
             } catch (Exception ex) {
                 config.getLogger().error("Scan listener error", ex);
             }

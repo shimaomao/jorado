@@ -1,36 +1,19 @@
-/*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package com.jorado.qos.command.impl;
 
-import com.jorado.qos.command.BaseCommand;
+import com.jorado.qos.command.Command;
 import com.jorado.qos.command.CommandContext;
 import com.jorado.qos.command.annotation.Cmd;
-import com.jorado.qos.command.util.CommandHelper;
+import com.jorado.qos.command.CommandLoader;
 import com.jorado.qos.textui.TTable;
 
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 @Cmd(name = "help", summary = "help command", example = {
         "help",
         "help online"
 })
-public class Help implements BaseCommand {
+public class Help implements Command {
     @Override
     public String execute(CommandContext commandContext, String[] args) {
         if (args != null && args.length > 0) {
@@ -44,11 +27,11 @@ public class Help implements BaseCommand {
 
     private String commandHelp(String commandName) {
 
-        if (!CommandHelper.hasCommand(commandName)) {
+        if (!CommandLoader.hasCommand(commandName)) {
             return "no such command:" + commandName;
         }
 
-        Class<?> clazz = CommandHelper.getCommandClass(commandName);
+        Class<?> clazz = CommandLoader.getCommandClass(commandName);
 
         final Cmd cmd = clazz.getAnnotation(Cmd.class);
         final TTable tTable = new TTable(new TTable.ColumnDefine[]{
@@ -83,17 +66,12 @@ public class Help implements BaseCommand {
                 new TTable.ColumnDefine(80, false, TTable.Align.LEFT)
         });
 
-        final List<Class<?>> classes = CommandHelper.getAllCommandClass();
+        final List<Class<?>> classes = CommandLoader.getAllCommandClass();
 
-        Collections.sort(classes, new Comparator<Class<?>>() {
-
-            @Override
-            public int compare(Class<?> o1, Class<?> o2) {
-                final Integer o1s = o1.getAnnotation(Cmd.class).sort();
-                final Integer o2s = o2.getAnnotation(Cmd.class).sort();
-                return o1s.compareTo(o2s);
-            }
-
+        Collections.sort(classes, (o1, o2) -> {
+            final Integer o1s = o1.getAnnotation(Cmd.class).sort();
+            final Integer o2s = o2.getAnnotation(Cmd.class).sort();
+            return o1s.compareTo(o2s);
         });
         for (Class<?> clazz : classes) {
 

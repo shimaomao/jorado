@@ -80,8 +80,9 @@ public class EventConfiguration {
 
     public synchronized <T extends ThreadContext> void registerThreadContext(T threadContext) {
 
-        if (null == threadContext)
+        if (null == threadContext) {
             return;
+        }
 
         EventConfiguration.threadContext = threadContext;
         getLogger().info(String.format("ThreadContext [%s] register ok", threadContext.getClass().getName()));
@@ -89,8 +90,9 @@ public class EventConfiguration {
 
     public synchronized <T extends Plugin> void registerPlugin(T plugin) {
 
-        if (null == plugin)
+        if (null == plugin) {
             return;
+        }
 
         String key = plugin.getClass().getName();
 
@@ -110,8 +112,9 @@ public class EventConfiguration {
 
     public synchronized <T extends Listener> void registerListener(T listener) {
 
-        if (null == listener)
+        if (null == listener) {
             return;
+        }
 
         String key = listener.getClass().getName();
 

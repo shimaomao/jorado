@@ -16,8 +16,8 @@
  */
 package com.jorado.qos.server.handler;
 
-import com.jorado.common.logger.Logger;
-import com.jorado.common.logger.LoggerFactory;
+import com.jorado.core.logger.Logger;
+import com.jorado.core.logger.LoggerFactory;
 import com.jorado.qos.command.CommandContext;
 import com.jorado.qos.command.CommandExecutor;
 import com.jorado.qos.command.DefaultCommandExecutor;

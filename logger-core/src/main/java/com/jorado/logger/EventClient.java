@@ -57,23 +57,28 @@ public class EventClient implements Cloneable {
 
     public String submitEvent(Event ev, ContextData contextData) {
 
-        if (!configuration.isEnabled())
+        if (!configuration.isEnabled()) {
             return null;
+        }
 
-        if (null == ev)
+        if (null == ev) {
             throw new NullEventException();
+        }
 
-        if (ev.isSubmitted())
+        if (ev.isSubmitted()) {
             return ev.getReferenceId();
+        }
 
-        if (StringUtils.isNullOrWhiteSpace(ev.getType()))
+        if (StringUtils.isNullOrWhiteSpace(ev.getType())) {
             ev.setType(EventTypes.LOG);
+        }
 
         EventContext context = new EventContext(this, ev, contextData);
         PluginManager.run(context);
 
-        if (StringUtils.isNullOrWhiteSpace(ev.getReferenceId()))
+        if (StringUtils.isNullOrWhiteSpace(ev.getReferenceId())) {
             ev.setReferenceId(StringUtils.uuid());
+        }
 
         if (context.isCanceled()) {
             context.getLogger().info(String.format("Event submit cancelled by event pipeline: refid=%s type=%s message=%s", ev.getReferenceId(), ev.getMessage(), ev.getType()));
@@ -84,8 +89,9 @@ public class EventClient implements Cloneable {
 
         lastReferenceId = ev.getReferenceId();
 
-        if (context.isCounterEnabled())
+        if (context.isCounterEnabled()) {
             counter.getAndIncrement();
+        }
 
         ev.setSubmitted(true);
 
@@ -190,8 +196,9 @@ public class EventClient implements Cloneable {
     public EventBuilder createException(Throwable exception, boolean isUnhandledError) {
         ContextData contextData = new ContextData();
         contextData.setException(exception);
-        if (isUnhandledError)
+        if (isUnhandledError) {
             contextData.markAsUnhandledError();
+        }
         return createEvent(contextData).setType(EventTypes.ERROR);
     }
 
@@ -227,8 +234,9 @@ public class EventClient implements Cloneable {
 
     public EventBuilder createLog(String source, String message, String level) {
         EventBuilder builder = createLog(source, message);
-        if (!StringUtils.isNullOrWhiteSpace(level))
+        if (!StringUtils.isNullOrWhiteSpace(level)) {
             builder.addData(DataTypes.LEVEL, level.trim());
+        }
 
         return builder;
     }
