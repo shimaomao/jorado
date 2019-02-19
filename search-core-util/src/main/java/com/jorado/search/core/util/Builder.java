@@ -2,16 +2,23 @@ package com.jorado.search.core.util;
 
 import com.jorado.search.core.model.searchinfo.SearchInfo;
 import com.jorado.search.core.util.condition.Condition;
+import com.jorado.search.core.util.condition.Factory.ApiConditionFactory;
+import com.jorado.search.core.util.condition.Factory.ConditionFactory;
+import com.jorado.search.core.util.condition.Factory.SolrConditionFactory;
 import com.jorado.search.core.util.condition.QueryCondition;
 import com.jorado.search.core.util.condition.RangeCondition;
 import com.jorado.search.core.util.enums.QueryOccur;
+import com.jorado.search.core.util.util.StringUtils;
 
-public class Builder {
+public abstract class Builder {
 
     protected SearchInfo searchInfo;
 
+    protected ConditionFactory conditionFactory;
+
     protected Builder(SearchInfo searchInfo) {
         this.searchInfo = searchInfo;
+        this.conditionFactory = new SolrConditionFactory();
     }
 
     /**
@@ -48,6 +55,39 @@ public class Builder {
         return this;
     }
 
+    /**
+     * 设置起始索引
+     *
+     * @param start
+     * @return
+     */
+    public Builder setStart(int start) {
+        this.searchInfo.setStart(start);
+        return this;
+    }
+
+    /**
+     * 设置返回记录数
+     *
+     * @param rows
+     * @return
+     */
+    public Builder setRows(int rows) {
+        this.searchInfo.setRows(rows);
+        return this;
+    }
+
+    /**
+     * 设置条件工厂
+     *
+     * @param conditionFactory
+     * @return
+     */
+    public Builder setConditionFactory(ConditionFactory conditionFactory) {
+        this.conditionFactory = conditionFactory;
+        return this;
+    }
+
     public SearchInfo build() {
 
         //校准start
@@ -56,8 +96,9 @@ public class Builder {
         }
 
         //校准返回记录最小值
-        if (this.searchInfo.getRows() < 0)
+        if (this.searchInfo.getRows() < 0) {
             this.searchInfo.setRows(10);
+        }
 
         return this.searchInfo;
     }
@@ -75,36 +116,13 @@ public class Builder {
      * @return
      */
     protected String getQueryInfo(QueryOccur occur, Condition condition) {
-        String queryString = condition.toQueryString();
+        String queryString = conditionFactory.buildQuery(condition);
+        if (StringUtils.isNullOrWhiteSpace(queryString)) {
+            return "";
+        }
         if (occur == QueryOccur.MUST) {
             return queryString;
         }
         return String.format("%s(%s)", occur, queryString);
-    }
-
-    /**
-     * 条件验证
-     *
-     * @param condition
-     */
-    protected boolean isValidCondition(Condition condition) {
-        return null != condition && condition.isValid();
-    }
-
-    protected Condition[] buildCondition(String... conditions) {
-        int size = conditions.length;
-        Condition[] conditionArray = new Condition[size];
-        for (int i = 0, j = size; i < j; i++) {
-            conditionArray[i] = new QueryCondition(conditions[i]);
-        }
-        return conditionArray;
-    }
-
-    protected Condition buildCondition(String field, Object value) {
-        return new QueryCondition(field, value);
-    }
-
-    protected Condition buildCondition(String field, Object from, Object to) {
-        return new RangeCondition(field, from, to);
     }
 }

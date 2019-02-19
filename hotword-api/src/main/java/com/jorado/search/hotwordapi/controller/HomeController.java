@@ -12,7 +12,7 @@ import com.jorado.search.core.solrclient.SolrjClientPool;
 import com.jorado.search.core.solrclient.SolrjOption;
 import com.jorado.search.core.util.SearchBuilder;
 import com.jorado.search.core.util.condition.Condition;
-import com.jorado.search.core.util.condition.QueryCondition;
+import com.jorado.search.core.util.condition.solr.QueryCondition;
 import com.jorado.search.hotword.config.RemoteSettings;
 import com.jorado.search.hotword.exception.SuggestNotEnabledException;
 import com.jorado.search.hotword.model.enums.HotWordType;

@@ -26,91 +26,12 @@ public final class FacetBuilder extends Builder {
     }
 
     /**
-     * 添加统计条件
-     * 可多个，多个是and的关系
-     *
-     * @param conditions
-     * @return
-     */
-    public FacetBuilder addFacetQuery(Condition... conditions) {
-        for (Condition condition : conditions) {
-            if (!isValidCondition(condition)) {
-                continue;
-            }
-            String queryInfo = getQueryInfo(QueryOccur.MUST, condition);
-            this.searchInfo.getFacetSearchInfo().getQuery().add(queryInfo);
-        }
-        return this;
-    }
-
-    public FacetBuilder addFacetQuery(String... conditions) {
-        addFacetQuery(buildCondition(conditions));
-        return this;
-    }
-
-    public FacetBuilder addFacetQuery(String field, Object value) {
-        addFacetQuery(buildCondition(field, value));
-        return this;
-    }
-
-    public FacetBuilder addFacetQuery(String field, Object from, Object to) {
-        addFacetQuery(buildCondition(field, from, to));
-        return this;
-    }
-
-    public FacetBuilder setFacetQuery(String query) {
-        if (StringUtils.isNotNullOrWhiteSpace(query)) {
-            this.searchInfo.getFacetSearchInfo().getQuery().clear();
-            this.searchInfo.getFacetSearchInfo().getQuery().add(query);
-        }
-        return this;
-    }
-
-    public FacetBuilder clearFacetQuery() {
-        this.searchInfo.getFacetSearchInfo().getQuery().clear();
-        return this;
-    }
-
-    /**
-     * 添加统计排除条件
-     * 可多个，多个是and的关系
-     *
-     * @param conditions
-     * @return
-     */
-    public FacetBuilder addNotFacetQuery(Condition... conditions) {
-        for (Condition condition : conditions) {
-            if (!isValidCondition(condition)) {
-                continue;
-            }
-            String queryInfo = getQueryInfo(QueryOccur.MUST_NOT, condition);
-            this.searchInfo.getFacetSearchInfo().getQuery().add(queryInfo);
-        }
-        return this;
-    }
-
-    public FacetBuilder addNotFacetQuery(String... conditions) {
-        addNotFacetQuery(buildCondition(conditions));
-        return this;
-    }
-
-    public FacetBuilder addNotFacetQuery(String field, Object value) {
-        addNotFacetQuery(buildCondition(field, value));
-        return this;
-    }
-
-    public FacetBuilder addNotFacetQuery(String field, Object from, Object to) {
-        addNotFacetQuery(buildCondition(field, from, to));
-        return this;
-    }
-
-    /**
      * 添加统计字段
      *
      * @param fields
      * @return
      */
-    public FacetBuilder addFacetField(String... fields) {
+    public FacetBuilder addField(String... fields) {
         if (null == fields) {
             return this;
         }
@@ -136,11 +57,46 @@ public final class FacetBuilder extends Builder {
     }
 
     /**
-     * 获取统计查询信息
+     * 添加统计条件
+     * 可多个，多个是and的关系
+     *
+     * @param conditions
+     * @return
+     */
+    public FacetBuilder addQuery(Condition... conditions) {
+        for (Condition condition : conditions) {
+            String queryInfo = getQueryInfo(QueryOccur.MUST, condition);
+            if (StringUtils.isNotNullOrWhiteSpace(queryInfo)) {
+                this.searchInfo.getFacetSearchInfo().getQuery().add(queryInfo);
+            }
+        }
+        return this;
+    }
+
+    /**
+     * 添加统计排除条件
+     * 可多个，多个是and的关系
+     *
+     * @param conditions
+     * @return
+     */
+    public FacetBuilder addNotQuery(Condition... conditions) {
+        for (Condition condition : conditions) {
+            String queryInfo = getQueryInfo(QueryOccur.MUST_NOT, condition);
+            if (StringUtils.isNotNullOrWhiteSpace(queryInfo)) {
+                this.searchInfo.getFacetSearchInfo().getQuery().add(queryInfo);
+            }
+        }
+        return this;
+    }
+
+    /**
+     * 清空分组条件
      *
      * @return
      */
-    public FacetSearchInfo buildFacet() {
-        return this.build().getFacetSearchInfo();
+    public FacetBuilder clearQuery() {
+        this.searchInfo.getFacetSearchInfo().getQuery().clear();
+        return this;
     }
 }

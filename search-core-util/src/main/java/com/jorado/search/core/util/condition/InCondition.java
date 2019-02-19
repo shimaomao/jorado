@@ -9,53 +9,46 @@ import java.util.List;
 /**
  * 多值查询条件
  */
-public final class InCondition extends Condition {
+public class InCondition extends Condition {
 
-    public InCondition(String query) {
-        super(query);
-    }
-
-    public InCondition(String field, String value) {
-        super(field, value);
-    }
+    private List<String> values;
 
     public InCondition(String field, List<String> values) {
-        this(field, StringUtils.joinString(values));
+        super(field);
+        this.values = values;
     }
 
-    public InCondition(String field, String[] values) {
-        this(field, StringUtils.joinString(values));
+    public InCondition(String field, String... values) {
+        super(field);
+        List<String> vs = new ArrayList<>();
+        for (String v : values) {
+            vs.add(v);
+        }
     }
 
-    public static Condition newCondition(String query) {
-        return new InCondition(query);
+    public static Condition newCondition(String field, List<String> values) {
+        return new InCondition(field, values);
     }
 
-    public static Condition newCondition(String field, String value) {
-        return new InCondition(field, value);
-    }
-
-    public static Condition newCondition(String field, List<String> value) {
-        return new InCondition(field, value);
-    }
-
-    public static Condition newCondition(String field, String[] value) {
-        return new InCondition(field, value);
+    public static Condition newCondition(String field, String... values) {
+        return new InCondition(field, values);
     }
 
     @Override
-    protected QueryMode setMode() {
+    public QueryMode getQueryMode() {
         return QueryMode.IN;
     }
 
     @Override
-    protected String buildQuery() {
-        this.setValue(this.getValue().replaceAll(";", ","));
-        String[] values = StringUtils.splitString(this.getValue(), ",", true);
-        List<String> items = new ArrayList<>();
-        for (String v : values) {
-            items.add(String.format("%s:%s", this.getField(), v));
-        }
-        return StringUtils.joinString(items, " OR ");
+    public String getValue() {
+        return StringUtils.joinString(values, ";");
+    }
+
+    public List<String> getValues() {
+        return values;
+    }
+
+    public void setValues(List<String> values) {
+        this.values = values;
     }
 }

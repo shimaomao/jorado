@@ -6,20 +6,28 @@ public enum QueryMode {
         public String toString() {
             return "普通查询";
         }
-    }, RANGE {
+    },
+    RANGE {
         @Override
         public String toString() {
             return "区间查询";
         }
-    }, DATE_RANGE {
-        @Override
-        public String toString() {
-            return "日期区间查询";
-        }
-    }, IN {
+    },
+    IN {
         @Override
         public String toString() {
             return "范围内查询";
+        }
+    },
+    KEYWORD {
+        @Override
+        public String toString() {
+            return "关键字查询";
+        }
+    }, COORDINATE {
+        @Override
+        public String toString() {
+            return "地理位置查询";
         }
     }
 }

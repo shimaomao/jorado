@@ -1501,7 +1501,9 @@ public class StringUtils {
         StringTokenizer st = new StringTokenizer(str, sdelimiter);
         while (st.hasMoreElements()) {
             String entry = st.nextToken();
-            if (isRemoveEmptyEntries && isNullOrWhiteSpace(entry)) continue;
+            if (isRemoveEmptyEntries && isNullOrWhiteSpace(entry)) {
+                continue;
+            }
             list.add(entry);
         }
         return list;

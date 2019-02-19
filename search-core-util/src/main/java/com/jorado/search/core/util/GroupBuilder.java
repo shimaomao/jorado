@@ -26,91 +26,12 @@ public final class GroupBuilder extends Builder {
     }
 
     /**
-     * 添加分组统计条件
-     * 可多个，多个是and的关系
-     *
-     * @param conditions
-     * @return
-     */
-    public GroupBuilder addGroupQuery(Condition... conditions) {
-        for (Condition condition : conditions) {
-            if (!isValidCondition(condition)) {
-                continue;
-            }
-            String queryInfo = getQueryInfo(QueryOccur.MUST, condition);
-            this.searchInfo.getGroupSearchInfo().getQuery().add(queryInfo);
-        }
-        return this;
-    }
-
-    public GroupBuilder addGroupQuery(String... conditions) {
-        addGroupQuery(buildCondition(conditions));
-        return this;
-    }
-
-    public GroupBuilder addGroupQuery(String field, Object value) {
-        addGroupQuery(buildCondition(field, value));
-        return this;
-    }
-
-    public GroupBuilder addGroupQuery(String field, Object from, Object to) {
-        addGroupQuery(buildCondition(field, from, to));
-        return this;
-    }
-
-    public GroupBuilder setGroupQuery(String query) {
-        if (StringUtils.isNotNullOrWhiteSpace(query)) {
-            this.searchInfo.getGroupSearchInfo().getQuery().clear();
-            this.searchInfo.getGroupSearchInfo().getQuery().add(query);
-        }
-        return this;
-    }
-
-    public GroupBuilder clearGroupQuery() {
-        this.searchInfo.getGroupSearchInfo().getQuery().clear();
-        return this;
-    }
-
-    /**
-     * 添加分组统计排除条件
-     * 可多个，多个是and的关系
-     *
-     * @param conditions
-     * @return
-     */
-    public GroupBuilder addNotGroupQuery(Condition... conditions) {
-        for (Condition condition : conditions) {
-            if (!isValidCondition(condition)) {
-                continue;
-            }
-            String queryInfo = getQueryInfo(QueryOccur.MUST_NOT, condition);
-            this.searchInfo.getGroupSearchInfo().getQuery().add(queryInfo);
-        }
-        return this;
-    }
-
-    public GroupBuilder addNotGroupQuery(String... conditions) {
-        addNotGroupQuery(buildCondition(conditions));
-        return this;
-    }
-
-    public GroupBuilder addNotGroupQuery(String field, Object value) {
-        addNotGroupQuery(buildCondition(field, value));
-        return this;
-    }
-
-    public GroupBuilder addNotGroupQuery(String field, Object from, Object to) {
-        addNotGroupQuery(buildCondition(field, from, to));
-        return this;
-    }
-
-    /**
      * 添加分组统计字段
      *
      * @param fields
      * @return
      */
-    public GroupBuilder addGroupField(String... fields) {
+    public GroupBuilder addField(String... fields) {
         if (null == fields) {
             return this;
         }
@@ -135,13 +56,47 @@ public final class GroupBuilder extends Builder {
         return this;
     }
 
+    /**
+     * 添加分组统计条件
+     * 可多个，多个是and的关系
+     *
+     * @param conditions
+     * @return
+     */
+    public GroupBuilder addQuery(Condition... conditions) {
+        for (Condition condition : conditions) {
+            String queryInfo = getQueryInfo(QueryOccur.MUST, condition);
+            if (StringUtils.isNotNullOrWhiteSpace(queryInfo)) {
+                this.searchInfo.getGroupSearchInfo().getQuery().add(queryInfo);
+            }
+        }
+        return this;
+    }
 
     /**
-     * 获取分组统计查询信息
+     * 添加分组统计排除条件
+     * 可多个，多个是and的关系
+     *
+     * @param conditions
+     * @return
+     */
+    public GroupBuilder addNotQuery(Condition... conditions) {
+        for (Condition condition : conditions) {
+            String queryInfo = getQueryInfo(QueryOccur.MUST_NOT, condition);
+            if (StringUtils.isNotNullOrWhiteSpace(queryInfo)) {
+                this.searchInfo.getGroupSearchInfo().getQuery().add(queryInfo);
+            }
+        }
+        return this;
+    }
+
+    /**
+     * 清空分组查询条件
      *
      * @return
      */
-    public GroupSearchInfo buildGroup() {
-        return this.build().getGroupSearchInfo();
+    public GroupBuilder clearQuery() {
+        this.searchInfo.getGroupSearchInfo().getQuery().clear();
+        return this;
     }
 }

@@ -40,7 +40,7 @@ public final class SearchInfo implements Serializable {
     /**
      * 排序模式
      */
-    private String sortMode;
+    private String sort;
 
     /**
      * 是否调试
@@ -161,12 +161,12 @@ public final class SearchInfo implements Serializable {
         this.client = client;
     }
 
-    public String getSortMode() {
-        return sortMode;
+    public String getSort() {
+        return sort;
     }
 
-    public void setSortMode(String sortMode) {
-        this.sortMode = sortMode;
+    public void setSort(String sort) {
+        this.sort = sort;
     }
 
     public boolean isDebug() {
@@ -240,14 +240,14 @@ public final class SearchInfo implements Serializable {
     @Override
     public String toString() {
         return "SearchInfo{" +
-                "keyword='" + keyword + '\'' +
-                ", start=" + start +
+                "start=" + start +
                 ", rows=" + rows +
                 ", clientIP='" + clientIP + '\'' +
                 ", client='" + client + '\'' +
-                ", sortMode='" + sortMode + '\'' +
+                ", sort='" + sort + '\'' +
                 ", debug=" + debug +
                 ", fields=" + fields +
+                ", params=" + params +
                 ", field='" + field + '\'' +
                 ", query=" + query +
                 ", filterQuery=" + filterQuery +
