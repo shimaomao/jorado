@@ -1,0 +1,39 @@
+apply plugin: 'maven-publish'
+
+task sourceJar(type: Jar) {
+    from sourceSets.main.allJava
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+
+            artifact sourceJar {
+                classifier 'sources'
+            }
+        }
+    }
+    repositories {
+        maven {
+            url "http://maven.zhaopin.com:8000/nexus/content/repositories/snapshots"
+            credentials {
+                username 'qilei.sun'
+                password 'zhaopin'
+            }
+        }
+
+        mavenLocal()
+    }
+}
+
+dependencies {
+    compile project(':core')
+    compile project(':logger')
+    compile "org.junit.jupiter:junit-jupiter-engine:5.4.0"
+    compile "org.junit.jupiter:junit-jupiter-params:5.4.0"
+    compile "org.mockito:mockito-core:2.24.0"
+    compile "org.hamcrest:hamcrest-all:+"
+    compile 'io.netty:netty-all:4.1.33.Final'
+
+}

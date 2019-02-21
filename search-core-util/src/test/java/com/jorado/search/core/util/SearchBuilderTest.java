@@ -23,7 +23,7 @@ public class SearchBuilderTest {
             Condition q4 = new QueryCondition("q4", "1");
 
             Condition q5 = q1.and(q2);
-            Condition q6 = q3.or(q4);
+            Condition q6 = q3.and(q4);
             searchBuilder.addQuery(q5.or(q6));
 
             SearchInfo searchInfo = searchBuilder.build();

@@ -28,5 +28,5 @@ publishing {
 }
 dependencies {
     compile project(':logger')
-    compile 'com.alibaba:dubbo:2.6.5'
+    compile 'org.apache.dubbo:dubbo:2.7.0'
 }

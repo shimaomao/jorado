@@ -1,0 +1,1 @@
+5|大专|Associate||1|1|5{$}4|本科|Bachelor||2|1|7{$}3|硕士|Master||3|1|9{$}1|博士|Doctor||4|1|15{$}10|MBA|MBA||5|1|11{$}11|EMBA|EMBA||6|1|13{$}12|中专|Secondary Specialized||7|1|4{$}13|中技|Skilled Workers Training||8|1|2{$}7|高中| Senior High||9|1|3{$}9|初中|junior high||10|1|1{$}8|其他|Other||11|1|0
