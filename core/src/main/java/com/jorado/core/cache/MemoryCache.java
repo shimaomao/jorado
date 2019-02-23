@@ -54,8 +54,9 @@ public class MemoryCache<T> implements ICache<T> {
 
     @Override
     public void remove(String key) {
-        if (cache.containsKey(key))
+        if (cache.containsKey(key)) {
             cache.remove(key);
+        }
     }
 
     @Override
