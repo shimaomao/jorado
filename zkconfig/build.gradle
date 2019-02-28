@@ -1,4 +1,4 @@
-apply plugin: 'maven-publish'
+apply plugin: "maven-publish"
 
 task sourceJar(type: Jar) {
     from sourceSets.main.allJava
@@ -18,8 +18,8 @@ publishing {
         maven {
             url "http://172.17.0.59:8081/nexus/content/repositories/snapshots"
             credentials {
-                username 'admin'
-                password 'admin123'
+                username "admin"
+                password "admin123"
             }
         }
     }
@@ -27,6 +27,6 @@ publishing {
 
 
 dependencies {
-    compile project(':core')
+    compile project(":core")
     compile "org.apache.zookeeper:zookeeper:3.4.12"
 }

@@ -1,5 +1,5 @@
 
-apply plugin: 'maven-publish'
+apply plugin: "maven-publish"
 
 task sourceJar(type: Jar) {
     from sourceSets.main.allJava
@@ -19,8 +19,8 @@ publishing {
         maven {
             url "http://maven.zhaopin.com:8000/nexus/content/repositories/snapshots"
             credentials {
-                username 'qilei.sun'
-                password 'zhaopin'
+                username "qilei.sun"
+                password "zhaopin"
             }
         }
 

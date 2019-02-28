@@ -1,4 +1,4 @@
-apply plugin: 'maven-publish'
+apply plugin: "maven-publish"
 
 task sourceJar(type: Jar) {
     from sourceSets.main.allJava
@@ -18,14 +18,14 @@ publishing {
         maven {
             url "http://maven.zhaopin.com:8000/nexus/content/repositories/snapshots"
             credentials {
-                username 'qilei.sun'
-                password 'zhaopin'
+                username "qilei.sun"
+                password "zhaopin"
             }
         }
     }
 }
 
 dependencies {
-    compile "org.apache.lucene:lucene-analyzers-common:5.2.1"
+    compile "org.apache.lucene:lucene-analyzers-common:$solrVersion"
     compile("org.apache.httpcomponents:httpclient:$httpClientVersion")
 }

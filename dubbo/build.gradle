@@ -1,5 +1,5 @@
 
-apply plugin: 'maven-publish'
+apply plugin: "maven-publish"
 
 task sourceJar(type: Jar) {
     from sourceSets.main.allJava
@@ -11,7 +11,7 @@ publishing {
             from components.java
 
             artifact sourceJar {
-                classifier 'sources'
+                classifier "sources"
             }
         }
     }
@@ -19,8 +19,8 @@ publishing {
         maven {
             url "http://maven.zhaopin.com:8000/nexus/content/repositories/snapshots"
             credentials {
-                username 'qilei.sun'
-                password 'zhaopin'
+                username "qilei.sun"
+                password "zhaopin"
             }
         }
 
@@ -29,7 +29,7 @@ publishing {
 }
 
 dependencies {
-    compile project(':logger-dubbo')
+    compile project(":logger-dubbo")
     compile("javax.ws.rs:javax.ws.rs-api:2.0.1")
     compile("org.jboss.resteasy:resteasy-client:3.1.3.Final")
     compile("org.jboss.resteasy:resteasy-jaxrs:3.1.3.Final")

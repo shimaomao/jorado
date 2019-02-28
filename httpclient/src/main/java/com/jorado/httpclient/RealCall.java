@@ -55,9 +55,9 @@ public class RealCall implements Call {
     public <T> Result<T> request(Class<T> type) {
 
         Result<HttpResponse> result = request();
-        if (result.getCode() > 200)
+        if (result.getCode() > 200) {
             return new Result<>(result.getCode(), result.getMessage());
-
+        }
         T t = convert(result.getData(), type);
 
         return new Result<>(t);
@@ -67,7 +67,9 @@ public class RealCall implements Call {
     public Result<HttpResponse> request() {
 
         synchronized (this) {
-            if (executed) throw new IllegalStateException("Already executed");
+            if (executed) {
+                throw new IllegalStateException("Already executed");
+            }
             executed = true;
         }
 
@@ -77,9 +79,9 @@ public class RealCall implements Call {
 
             HttpResponse response = getResponse();
 
-            if (response.getStatusCode() != 200)
+            if (response.getStatusCode() != 200) {
                 throw new CoreException(String.format("Http status code=[%d]", response.getStatusCode()));
-
+            }
             return new Result<>(response);
 
         } catch (TimeoutException e) {
@@ -96,7 +98,9 @@ public class RealCall implements Call {
     @Override
     public void enqueue(Callback responseCallback) {
         synchronized (this) {
-            if (executed) throw new IllegalStateException("Already executed");
+            if (executed) {
+                throw new IllegalStateException("Already executed");
+            }
             executed = true;
         }
         client.getDispatcher().enqueue(new AsyncCall(responseCallback));
@@ -135,15 +139,17 @@ public class RealCall implements Call {
             StringBuilder urlBuilder = new StringBuilder(httpRequest.getUrl());
             //拼接url
             if (!httpRequest.getGetParams().isEmpty()) {
-                if (httpRequest.getUrl().lastIndexOf('?') < 0)
+                if (httpRequest.getUrl().lastIndexOf('?') < 0) {
                     urlBuilder.append("?");
+                }
 
                 urlBuilder.append("&");
 
                 int index = 0;
                 for (String key : httpRequest.getGetParams().keySet()) {
-                    if (index > 0)
+                    if (index > 0) {
                         urlBuilder.append("&");
+                    }
                     urlBuilder.append(String.format("%s=%s", key, URLEncoder.encode(httpRequest.getGetParams().get(key), "utf-8")));
                     index++;
                 }
@@ -191,10 +197,12 @@ public class RealCall implements Call {
             }
 
         } finally {
-            if (httpResponse != null)
+            if (httpResponse != null) {
                 httpResponse.close();
-            if (httpclient != null)
+            }
+            if (httpclient != null) {
                 httpclient.close();
+            }
         }
 
         return new HttpResponse(statusCode, queryString, contentTypeHeader == null ? "" : contentTypeHeader.getValue(), responseBody);
@@ -252,9 +260,9 @@ public class RealCall implements Call {
 
                 HttpResponse response = getResponse();
 
-                if (response.getStatusCode() != 200)
+                if (response.getStatusCode() != 200) {
                     throw new RuntimeException(String.format("Http status code=[%d]", response.getStatusCode()));
-
+                }
                 responseCallback.onResponse(RealCall.this, response);
 
             } catch (Exception e) {

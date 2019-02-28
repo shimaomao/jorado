@@ -65,18 +65,18 @@ subprojects {
     ext {
         springVersion = "4.3.16.RELEASE"
         solrVersion = "5.2.1"
-        httpClientVersion = "4.5.5"
-        jacksonVersion="2.9.7"
+        httpClientVersion = "4.5.6"
+        jacksonVersion="2.9.8"
+        slf4jVersion="1.7.26"
+        commonsLoggingVersion="1.2"
+        dubboVersion="2.7.0"
     }
 
     dependencies {
-        compile "org.slf4j:slf4j-api:+"
-        compile "org.slf4j:slf4j-log4j12:+"
-        compile "joda-time:joda-time:+"
-        compile("commons-logging:commons-logging:1.2")
+        compile "joda-time:joda-time:2.9.9"
 
         testCompile("junit:junit:4.12")
-        testCompile("org.assertj:assertj-core:3.9.1")
+        testCompile("org.assertj:assertj-core:3.12.0")
     }
 
     sonarqube {
