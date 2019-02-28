@@ -103,8 +103,8 @@ public final class QueryBuilder {
         }
 
 
-        if (!StringUtils.isNullOrWhiteSpace(searchInfo.getSortMode())) {
-            query.set("sort", searchInfo.getSortMode());
+        if (!StringUtils.isNullOrWhiteSpace(searchInfo.getSort())) {
+            query.set("sort", searchInfo.getSort());
         }
 
         for (Map.Entry<String, String> entry : searchInfo.getParams().entrySet()) {

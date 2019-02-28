@@ -73,8 +73,6 @@ subprojects {
     }
 
     dependencies {
-        compile "joda-time:joda-time:2.9.9"
-
         testCompile("junit:junit:4.12")
         testCompile("org.assertj:assertj-core:3.12.0")
     }

@@ -1,7 +1,6 @@
 package com.jorado.core.util;
 
-
-public class ByteArrayClassLoader extends ClassLoader {
+public class ByteArrayClassLoader  extends ClassLoader  {
 
     public ByteArrayClassLoader() {
         super(ByteArrayClassLoader.class.getClassLoader());

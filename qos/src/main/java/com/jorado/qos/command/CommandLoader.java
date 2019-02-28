@@ -2,7 +2,7 @@ package com.jorado.qos.command;
 
 import com.jorado.core.logger.Logger;
 import com.jorado.core.logger.LoggerFactory;
-import com.jorado.core.util.ClassLoader;
+import com.jorado.core.util.ClassUtils;
 import com.jorado.qos.Startup;
 
 import java.util.*;
@@ -42,7 +42,7 @@ public class CommandLoader {
     private static List<Class<?>> loadCommand() {
         final String packageName = "com.jorado.qos";
         List<Class<?>> commands = new ArrayList<>();
-        Set<Class<?>> classes = ClassLoader.getClasses(packageName, Command.class);
+        Set<Class<?>> classes = ClassUtils.getClasses(packageName, Command.class);
         classes.forEach(n -> {
             try {
                 commands.add(n);
