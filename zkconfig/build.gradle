@@ -28,5 +28,5 @@ publishing {
 
 dependencies {
     compile project(":core")
-    compile "org.apache.zookeeper:zookeeper:3.4.12"
+    compile "org.apache.zookeeper:zookeeper:$zookeeperVersion"
 }

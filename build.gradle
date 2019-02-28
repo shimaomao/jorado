@@ -44,11 +44,11 @@ subprojects {
 
     [compileJava, compileTestJava]*.options*.encoding = "UTF-8"
 
-//    configurations.all {
-//        resolutionStrategy.cacheChangingModulesFor 0, "seconds"
-//        resolutionStrategy.cacheDynamicVersionsFor 0, "seconds"
-//    }
-//
+    configurations.all {
+        resolutionStrategy.cacheChangingModulesFor 0, "seconds"
+        resolutionStrategy.cacheDynamicVersionsFor 0, "seconds"
+    }
+
     ext {
         profile = System.getProperty("env", "dev")
         println "[current profile]:" + profile
@@ -70,6 +70,8 @@ subprojects {
         slf4jVersion="1.7.26"
         commonsLoggingVersion="1.2"
         dubboVersion="2.7.0"
+        zookeeperVersion="3.4.12"
+        nettyVersion="4.1.33.Final"
     }
 
     dependencies {
