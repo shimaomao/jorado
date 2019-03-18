@@ -10,6 +10,8 @@ import java.util.regex.Pattern;
  */
 public class CommonUtils {
 
+    static final Pattern PINYIN_PATT = Pattern.compile("[^\\u4E00-\\u9FA5)]+");
+
     /**
      * 向Map中插入数据，如果Map存在该数据，value值+1，否则，设置为1
      *
@@ -56,8 +58,7 @@ public class CommonUtils {
      */
     public static boolean isPinyin(String word) {
         boolean pinyin;
-        Pattern pinyinPatt = Pattern.compile("[^\\u4E00-\\u9FA5)]+");
-        pinyin = pinyinPatt.matcher(word).matches();
+        pinyin = PINYIN_PATT.matcher(word).matches();
         return pinyin;
     }
 

@@ -249,7 +249,9 @@ public abstract class BaseSearch<T> implements SearchService<T> {
 
             List<FacetField.Count> facetCount = field.getValues();
 
-            if (CollectionUtils.isEmpty(facetCount)) continue;
+            if (CollectionUtils.isEmpty(facetCount)) {
+                continue;
+            }
 
             for (FacetField.Count count : facetCount) {
                 fieldsCount.put(count.getName(), count.getCount());
