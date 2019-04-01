@@ -1,7 +1,5 @@
 package com.jorado.core.util;
 
-import com.jorado.core.exception.CoreException;
-
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -81,7 +79,7 @@ public final class ReflectUtils {
         try {
             return clazz.getMethod(methodName, argsType);
         } catch (NoSuchMethodException e) {
-            throw new CoreException(e.getMessage(), e);
+            throw new RuntimeException(e.getMessage(), e);
         }
     }
 
@@ -98,7 +96,7 @@ public final class ReflectUtils {
         try {
             return clazz.getMethod(methodName, propertyClazz);
         } catch (NoSuchMethodException e) {
-            throw new CoreException("No setter method for " + clazz.getName() + "#" + property, e);
+            throw new RuntimeException("No setter method for " + clazz.getName() + "#" + property, e);
         }
     }
 
@@ -119,13 +117,13 @@ public final class ReflectUtils {
                 methodName = "is" + property.substring(0, 1).toUpperCase() + property.substring(1);
                 method = clazz.getMethod(methodName);
             } catch (NoSuchMethodException e1) {
-                throw new CoreException("No getter method for " + clazz.getName() + "#" + property, e);
+                throw new RuntimeException("No getter method for " + clazz.getName() + "#" + property, e);
             }
         }
         return method;
     }
 
-    protected static boolean isBeanPropertyReadMethod(Method method) {
+    public static boolean isBeanPropertyReadMethod(Method method) {
         return method != null
                 && Modifier.isPublic(method.getModifiers())
                 && !Modifier.isStatic(method.getModifiers())
@@ -137,7 +135,7 @@ public final class ReflectUtils {
                 && (!"get".equals(method.getName()) && !"is".equals(method.getName()));
     }
 
-    protected static String getPropertyNameFromBeanReadMethod(Method method) {
+    public static String getPropertyNameFromBeanReadMethod(Method method) {
         if (isBeanPropertyReadMethod(method)) {
             if (method.getName().startsWith("get")) {
                 return method.getName().substring(3, 4).toLowerCase()
@@ -151,7 +149,7 @@ public final class ReflectUtils {
         return null;
     }
 
-    protected static boolean isBeanPropertyWriteMethod(Method method) {
+    public static boolean isBeanPropertyWriteMethod(Method method) {
         return method != null
                 && Modifier.isPublic(method.getModifiers())
                 && !Modifier.isStatic(method.getModifiers())
@@ -162,10 +160,47 @@ public final class ReflectUtils {
                 && !"set".equals(method.getName());
     }
 
-    protected static boolean isPublicInstanceField(Field field) {
+    public static boolean isPublicInstanceField(Field field) {
         return Modifier.isPublic(field.getModifiers())
                 && !Modifier.isStatic(field.getModifiers())
                 && !Modifier.isFinal(field.getModifiers())
                 && !field.isSynthetic();
+    }
+
+    public static boolean isBaseType(Class className) {
+        return className.equals(Integer.class) ||
+                className.equals(Byte.class) ||
+                className.equals(Long.class) ||
+                className.equals(Double.class) ||
+                className.equals(Float.class) ||
+                className.equals(Character.class) ||
+                className.equals(Short.class) ||
+                className.equals(Boolean.class) ||
+                className.equals(int.class) ||
+                className.equals(byte.class) ||
+                className.equals(long.class) ||
+                className.equals(double.class) ||
+                className.equals(float.class) ||
+                className.equals(char.class) ||
+                className.equals(short.class) ||
+                className.equals(boolean.class);
+
+    }
+
+    public static String getFieldValue(String fieldName, Object obj) {
+        try {
+
+            Field[] fields = obj.getClass().getDeclaredFields();
+
+            for (Field field : fields) {
+                if (field.getName().equalsIgnoreCase(fieldName)) {
+                    field.setAccessible(true);
+                    return field.get(obj).toString();
+                }
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return "";
     }
 }

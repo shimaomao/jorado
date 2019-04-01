@@ -65,18 +65,18 @@ subprojects {
     ext {
         springVersion = "4.3.16.RELEASE"
         solrVersion = "5.2.1"
-        httpClientVersion = "4.5.6"
+        httpClientVersion = "4.5.8"
         jacksonVersion="2.9.8"
         slf4jVersion="1.7.26"
         commonsLoggingVersion="1.2"
-        dubboVersion="2.7.0"
+        dubboVersion="2.7.1"
         zookeeperVersion="3.4.12"
-        nettyVersion="4.1.33.Final"
+        nettyVersion="4.1.34.Final"
     }
 
     dependencies {
         testCompile("junit:junit:4.12")
-        testCompile("org.assertj:assertj-core:3.12.0")
+        testCompile("org.assertj:assertj-core:3.12.2")
     }
 
     sonarqube {
