@@ -71,7 +71,7 @@ subprojects {
         commonsLoggingVersion="1.2"
         dubboVersion="2.7.1"
         zookeeperVersion="3.4.12"
-        nettyVersion="4.1.34.Final"
+        nettyVersion="4.1.36.Final"
     }
 
     dependencies {

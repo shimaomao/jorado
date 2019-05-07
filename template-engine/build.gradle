@@ -29,5 +29,5 @@ publishing {
 
 dependencies {
     compile project(":logger-core")
-    compile("org.apache.velocity:velocity-engine-core:2.0")
+    compile("org.apache.velocity:velocity-engine-core:2.1")
 }

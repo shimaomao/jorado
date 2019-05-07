@@ -30,5 +30,5 @@ publishing {
 dependencies {
     compile project(":logger")
     compile("org.ansj:ansj_seg:5.1.6")
-    compile("com.hankcs:hanlp:portable-1.7.2")
+    compile("com.hankcs:hanlp:portable-1.7.3")
 }
